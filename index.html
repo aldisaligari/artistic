@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>artistic — hero shader</title>
-<meta name="description" content="Hero experimental con degradé WebGL reactivo al cursor. Práctica de shaders y motion." />
+<title>artistic — hero shader 3D</title>
+<meta name="description" content="Hero experimental con degradé 3D reactivo al cursor. Práctica de shaders, geometría y motion." />
 <style>
   :root{
     --c1:#52abff;
@@ -112,12 +112,13 @@
   <div class="hero-content">
     <div class="eyebrow">artistic · shader lab</div>
     <h1>ARTISTIC</h1>
-    <p class="sub">Un playground de degradés, ruido y motion. El fondo reacciona al cursor y el cursor deja destellos a su paso.</p>
+    <p class="sub">Un playground de degradés, geometría y motion. La superficie es 3D de verdad: se deforma y gira con el cursor.</p>
   </div>
 
   <div class="hint" id="hint">mové el cursor</div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -125,38 +126,33 @@
   var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ============================================================
-     WEBGL BACKGROUND — degradé tipo "waterPlane"
-     Parámetros tomados del ShaderGradient original:
+     FONDO 3D REAL — Three.js
+     Un PlaneGeometry subdividido cuyos vértices se desplazan en Z
+     con ruido (fbm), iluminado con luz difusa + especular + fresnel,
+     y filmado con una cámara en perspectiva real (hay profundidad
+     de verdad, no un truco de sombreado sobre una superficie plana).
+     Parámetros de referencia del ShaderGradient original:
      color1 #52abff · color2 #000000 · color3 #f082ff
      brightness .6 · uSpeed 1.3 · uStrength 7.5
      uFrequency 5.5 · uDensity 3.6 · uAmplitude 1
-     rotationZ 50° · rotationY 10°
+     rotationY 10° · rotationZ 50° · fov 45 · cDistance 3.61
   ============================================================ */
 
   var glCanvas = document.getElementById('gl');
-  var gl = glCanvas.getContext('webgl') || glCanvas.getContext('experimental-webgl');
 
   var VERT = [
-    "attribute vec2 a_pos;",
-    "void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); }"
-  ].join("\n");
-
-  var FRAG = [
-    "precision highp float;",
-    "uniform vec2 u_resolution;",
     "uniform float u_time;",
     "uniform vec2 u_mouse;",
-    "uniform vec3 u_color1;",
-    "uniform vec3 u_color2;",
-    "uniform vec3 u_color3;",
     "uniform float u_speed;",
     "uniform float u_strength;",
     "uniform float u_frequency;",
     "uniform float u_density;",
     "uniform float u_amplitude;",
-    "uniform float u_brightness;",
-    "uniform float u_rotation;",
     "uniform float u_hover;",
+
+    "varying vec3 vNormal;",
+    "varying vec3 vViewPosition;",
+    "varying float vHeight;",
 
     "vec3 mod289v3(vec3 x){ return x - floor(x*(1.0/289.0))*289.0; }",
     "vec2 mod289v2(vec2 x){ return x - floor(x*(1.0/289.0))*289.0; }",
@@ -184,155 +180,180 @@
     "  return 130.0 * dot(m, g);",
     "}",
 
-    "float fbm(vec2 p){",
-    "  float value = 0.0;",
-    "  float amp = 0.5;",
-    "  for(int i=0;i<5;i++){",
-    "    value += amp * snoise(p);",
-    "    p *= 2.0;",
-    "    amp *= 0.5;",
-    "  }",
+    "float fbm5(vec2 p){",
+    "  float value = 0.0; float amp = 0.5;",
+    "  for(int i=0;i<5;i++){ value += amp*snoise(p); p *= 2.0; amp *= 0.5; }",
+    "  return value;",
+    "}",
+    "float fbm3(vec2 p){",
+    "  float value = 0.0; float amp = 0.5;",
+    "  for(int i=0;i<3;i++){ value += amp*snoise(p); p *= 2.0; amp *= 0.5; }",
     "  return value;",
     "}",
 
-    "void main(){",
-    "  vec2 uv = gl_FragCoord.xy / u_resolution.xy;",
-    "  vec2 p = uv - 0.5;",
-    "  p.x *= u_resolution.x / u_resolution.y;",
-
-    "  float ang = u_rotation;",
-    "  float s = sin(ang); float c = cos(ang);",
-    "  p = mat2(c, -s, s, c) * p;",
-
-    "  vec2 mouseP = (u_mouse - 0.5);",
-    "  mouseP.x *= u_resolution.x / u_resolution.y;",
-
-    "  float distToMouse = length(p - mouseP);",
-    "  float pull = exp(-distToMouse*2.2) * u_hover;",
-
+    "float heightAt(vec2 p, float t, vec2 mouseP, float pull, bool cheap){",
     "  vec2 warped = p + mouseP*0.35*u_hover;",
     "  warped += pull * normalize(p - mouseP + 0.0001) * 0.25;",
-
-    "  float t = u_time * u_speed * 0.15;",
-    "  float n = fbm(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
-    "  n += fbm(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
+    "  float n;",
+    "  if(cheap){",
+    "    n = fbm3(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
+    "    n += fbm3(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
+    "  } else {",
+    "    n = fbm5(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
+    "    n += fbm5(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
+    "  }",
     "  n *= (u_amplitude*0.6 + u_strength*0.05);",
     "  n += pull*1.4;",
+    "  return n;",
+    "}",
 
-    "  float g = clamp(n*0.5+0.5, 0.0, 1.0);",
+    "void main(){",
+    "  vec2 p = uv - 0.5;",
+    "  vec2 mouseP = u_mouse - 0.5;",
+    "  float distToMouse = length(p - mouseP);",
+    "  float pull = exp(-distToMouse*2.2) * u_hover;",
+    "  float t = u_time * u_speed * 0.15;",
 
-    "  vec3 col = mix(u_color1, u_color2, smoothstep(0.15, 0.55, g));",
-    "  col = mix(col, u_color3, smoothstep(0.5, 0.95, g));",
+    "  float h = heightAt(p, t, mouseP, pull, false);",
 
-    "  float vig = smoothstep(1.05, 0.2, length(p));",
-    "  col *= mix(0.6, 1.0, vig);",
-    "  col *= u_brightness*1.6;",
-    "  col += pull*0.5*vec3(1.0);",
+    "  float eps = 0.01;",
+    "  float hL = heightAt(p - vec2(eps,0.0), t, mouseP, pull, true);",
+    "  float hR = heightAt(p + vec2(eps,0.0), t, mouseP, pull, true);",
+    "  float hD = heightAt(p - vec2(0.0,eps), t, mouseP, pull, true);",
+    "  float hU = heightAt(p + vec2(0.0,eps), t, mouseP, pull, true);",
+
+    "  vec3 localNormal = normalize(vec3((hL-hR)*3.2, (hD-hU)*3.2, 1.0));",
+    "  vec3 displaced = position + normal * h * 0.55;",
+
+    "  vNormal = normalize(normalMatrix * localNormal);",
+    "  vHeight = h;",
+
+    "  vec4 mvPosition = modelViewMatrix * vec4(displaced, 1.0);",
+    "  vViewPosition = -mvPosition.xyz;",
+    "  gl_Position = projectionMatrix * mvPosition;",
+    "}"
+  ].join("\n");
+
+  var FRAG = [
+    "precision highp float;",
+    "uniform vec3 u_color1;",
+    "uniform vec3 u_color2;",
+    "uniform vec3 u_color3;",
+    "uniform float u_brightness;",
+
+    "varying vec3 vNormal;",
+    "varying vec3 vViewPosition;",
+    "varying float vHeight;",
+
+    "void main(){",
+    "  vec3 nrm = normalize(vNormal);",
+    "  vec3 viewDir = normalize(vViewPosition);",
+    "  vec3 lightDir = normalize(vec3(0.35, 0.55, 0.75));",
+
+    "  float diff = max(dot(nrm, lightDir), 0.0);",
+    "  vec3 halfDir = normalize(lightDir + viewDir);",
+    "  float spec = pow(max(dot(nrm, halfDir), 0.0), 26.0);",
+    "  float fresnel = pow(1.0 - max(dot(viewDir, nrm), 0.0), 3.0);",
+
+    "  float g = clamp(vHeight*0.5+0.5, 0.0, 1.0);",
+    "  g = clamp((g-0.5)*1.35+0.5, 0.0, 1.0);",
+
+    "  vec3 col = mix(u_color1, u_color2, smoothstep(0.36, 0.46, g));",
+    "  col = mix(col, u_color3, smoothstep(0.75, 0.83, g));",
+
+    "  col *= (0.48 + diff*0.78);",
+    "  col += spec * 0.5 * mix(vec3(1.0), u_color3, 0.35);",
+    "  col += fresnel * 0.16 * u_color1;",
+
+    "  col *= u_brightness * 1.6;",
 
     "  gl_FragColor = vec4(col, 1.0);",
     "}"
   ].join("\n");
-
-  function compile(type, src){
-    var sh = gl.createShader(type);
-    gl.shaderSource(sh, src);
-    gl.compileShader(sh);
-    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
-      console.error('Shader compile error:', gl.getShaderInfoLog(sh));
-    }
-    return sh;
-  }
-
-  var vShader = compile(gl.VERTEX_SHADER, VERT);
-  var fShader = compile(gl.FRAGMENT_SHADER, FRAG);
-  var program = gl.createProgram();
-  gl.attachShader(program, vShader);
-  gl.attachShader(program, fShader);
-  gl.linkProgram(program);
-  if(!gl.getProgramParameter(program, gl.LINK_STATUS)){
-    console.error('Program link error:', gl.getProgramInfoLog(program));
-  }
-  gl.useProgram(program);
-
-  var buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
-  var aPos = gl.getAttribLocation(program, 'a_pos');
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-
-  var u = {
-    resolution: gl.getUniformLocation(program, 'u_resolution'),
-    time: gl.getUniformLocation(program, 'u_time'),
-    mouse: gl.getUniformLocation(program, 'u_mouse'),
-    color1: gl.getUniformLocation(program, 'u_color1'),
-    color2: gl.getUniformLocation(program, 'u_color2'),
-    color3: gl.getUniformLocation(program, 'u_color3'),
-    speed: gl.getUniformLocation(program, 'u_speed'),
-    strength: gl.getUniformLocation(program, 'u_strength'),
-    frequency: gl.getUniformLocation(program, 'u_frequency'),
-    density: gl.getUniformLocation(program, 'u_density'),
-    amplitude: gl.getUniformLocation(program, 'u_amplitude'),
-    brightness: gl.getUniformLocation(program, 'u_brightness'),
-    rotation: gl.getUniformLocation(program, 'u_rotation'),
-    hover: gl.getUniformLocation(program, 'u_hover')
-  };
 
   function hexToRgb(hex){
     var v = parseInt(hex.replace('#',''), 16);
     return [((v>>16)&255)/255, ((v>>8)&255)/255, (v&255)/255];
   }
 
-  var COLOR1 = hexToRgb('#52abff');
-  var COLOR2 = hexToRgb('#000000');
-  var COLOR3 = hexToRgb('#f082ff');
+  var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setClearColor(0x000000, 1);
 
-  var BASE_SPEED = 1.3, BASE_STRENGTH = 7.5, BASE_FREQ = 5.5, BASE_DENSITY = 3.6, BASE_AMP = 1.0;
-  var BASE_ROT_Z = 50 * Math.PI/180;
-  var BRIGHTNESS = 0.6;
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 3.61);
+  camera.lookAt(0, 0, 0);
 
-  var mouseNorm = [0.5, 0.5];
-  var targetHover = reducedMotion ? 0.15 : 0.28;
-  var hover = targetHover;
-  var rotationOffset = 0;
-  var targetRotOffset = 0;
+  var group = new THREE.Group();
+  scene.add(group);
+
+  var geometry = new THREE.PlaneGeometry(14, 14, 110, 110);
+
+  var c1 = hexToRgb('#52abff');
+  var c2 = hexToRgb('#000000');
+  var c3 = hexToRgb('#f082ff');
+
+  var uniforms = {
+    u_time: { value: 0 },
+    u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
+    u_speed: { value: 1.3 },
+    u_strength: { value: 7.5 },
+    u_frequency: { value: 5.5 },
+    u_density: { value: 3.6 },
+    u_amplitude: { value: 1.0 },
+    u_brightness: { value: 0.6 },
+    u_hover: { value: reducedMotion ? 0.15 : 0.28 },
+    u_color1: { value: new THREE.Vector3(c1[0], c1[1], c1[2]) },
+    u_color2: { value: new THREE.Vector3(c2[0], c2[1], c2[2]) },
+    u_color3: { value: new THREE.Vector3(c3[0], c3[1], c3[2]) }
+  };
+
+  var material = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    vertexShader: VERT,
+    fragmentShader: FRAG,
+    side: THREE.DoubleSide
+  });
+
+  var mesh = new THREE.Mesh(geometry, material);
+  mesh.position.x = -1.3;
+  mesh.rotation.set(0, 10 * Math.PI/180, 50 * Math.PI/180);
+  group.add(mesh);
 
   function resize(){
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var w = glCanvas.clientWidth, h = glCanvas.clientHeight;
-    glCanvas.width = Math.floor(w*dpr);
-    glCanvas.height = Math.floor(h*dpr);
-    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize);
   resize();
 
-  var start = performance.now();
-  function render(){
-    var time = (performance.now() - start) / 1000;
+  var mouseNorm = [0.5, 0.5];
+  var targetHover = reducedMotion ? 0.15 : 0.28;
+  var hoverVal = targetHover;
+  var targetTiltX = 0, targetTiltY = 0, tiltX = 0, tiltY = 0;
 
-    hover += (targetHover - hover) * 0.06;
-    rotationOffset += (targetRotOffset - rotationOffset) * 0.04;
+  var clock = new THREE.Clock();
+  function animate(){
+    var t = clock.getElapsedTime();
 
-    gl.uniform2f(u.resolution, glCanvas.width, glCanvas.height);
-    gl.uniform1f(u.time, time);
-    gl.uniform2f(u.mouse, mouseNorm[0], mouseNorm[1]);
-    gl.uniform3f(u.color1, COLOR1[0], COLOR1[1], COLOR1[2]);
-    gl.uniform3f(u.color2, COLOR2[0], COLOR2[1], COLOR2[2]);
-    gl.uniform3f(u.color3, COLOR3[0], COLOR3[1], COLOR3[2]);
-    gl.uniform1f(u.speed, BASE_SPEED);
-    gl.uniform1f(u.strength, BASE_STRENGTH);
-    gl.uniform1f(u.frequency, BASE_FREQ);
-    gl.uniform1f(u.density, BASE_DENSITY);
-    gl.uniform1f(u.amplitude, BASE_AMP);
-    gl.uniform1f(u.brightness, BRIGHTNESS);
-    gl.uniform1f(u.rotation, BASE_ROT_Z + rotationOffset);
-    gl.uniform1f(u.hover, hover);
+    hoverVal += (targetHover - hoverVal) * 0.06;
+    tiltX += (targetTiltX - tiltX) * 0.05;
+    tiltY += (targetTiltY - tiltY) * 0.05;
+    group.rotation.x = tiltX;
+    group.rotation.y = tiltY;
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    requestAnimationFrame(render);
+    uniforms.u_time.value = t;
+    uniforms.u_mouse.value.set(mouseNorm[0], mouseNorm[1]);
+    uniforms.u_hover.value = hoverVal;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
-  requestAnimationFrame(render);
+  requestAnimationFrame(animate);
 
   /* ============================================================
      CURSOR CUSTOM + PARTÍCULAS "VOLCÁN"
@@ -378,7 +399,6 @@
   function updateParticles(){
     ctx.clearRect(0, 0, fx.clientWidth, fx.clientHeight);
 
-    // cursor: círculo blanco
     ctx.save();
     ctx.shadowColor = 'rgba(255,255,255,0.9)';
     ctx.shadowBlur = 16;
@@ -431,9 +451,10 @@
     mouseNorm[0] = x / rect.width;
     mouseNorm[1] = 1 - (y / rect.height);
     targetHover = 1;
-    targetRotOffset = ((x/rect.width) - 0.5) * 0.7;
 
     if(!reducedMotion){
+      targetTiltY = ((x/rect.width) - 0.5) * 0.36;
+      targetTiltX = ((y/rect.height) - 0.5) * -0.24;
       spawnParticles(x, y, Math.min(6, 2 + dist*0.15), dist);
     }
 
@@ -448,7 +469,8 @@
   hero.addEventListener('mouseleave', function(){
     pointer.active = false;
     targetHover = reducedMotion ? 0.15 : 0.28;
-    targetRotOffset = 0;
+    targetTiltX = 0;
+    targetTiltY = 0;
   });
   hero.addEventListener('touchmove', function(e){
     if(e.touches && e.touches[0]){

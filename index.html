@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>artistic — hero shader</title>
+<meta name="description" content="Hero experimental con degradé WebGL reactivo al cursor. Práctica de shaders y motion." />
+<style>
+  :root{
+    --c1:#52abff;
+    --c2:#000000;
+    --c3:#f082ff;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; background:#000; overflow-x:hidden; }
+  body{
+    font-family:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    color:#fff;
+  }
+
+  .hero{
+    position:relative;
+    width:100%;
+    height:100vh;
+    min-height:560px;
+    overflow:hidden;
+    cursor:none;
+    isolation:isolate;
+  }
+
+  .hero canvas{
+    position:absolute;
+    inset:0;
+    display:block;
+    width:100%;
+    height:100%;
+  }
+
+  #gl{ z-index:0; }
+  #fx{ z-index:2; pointer-events:none; }
+
+  .hero-content{
+    position:relative;
+    z-index:3;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:0 24px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    opacity:0.65;
+    margin-bottom:18px;
+    font-weight:500;
+  }
+
+  h1{
+    font-size:clamp(48px, 11vw, 148px);
+    line-height:0.95;
+    font-weight:700;
+    letter-spacing:-0.03em;
+    background:linear-gradient(120deg, #ffffff 0%, #d9e9ff 45%, #ffe3fb 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 60px rgba(82,171,255,0.25);
+  }
+
+  p.sub{
+    margin-top:20px;
+    max-width:560px;
+    font-size:clamp(14px,1.6vw,18px);
+    line-height:1.55;
+    opacity:0.8;
+    font-weight:400;
+  }
+
+  .hint{
+    position:absolute;
+    bottom:34px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:11px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    opacity:0.55;
+    transition:opacity 0.6s ease;
+    z-index:3;
+    pointer-events:none;
+  }
+  .hint.hidden{ opacity:0; }
+
+  @media (max-width: 640px){
+    .hero{ cursor:auto; }
+    #fx{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" id="hero">
+  <canvas id="gl"></canvas>
+  <canvas id="fx"></canvas>
+
+  <div class="hero-content">
+    <div class="eyebrow">artistic · shader lab</div>
+    <h1>ARTISTIC</h1>
+    <p class="sub">Un playground de degradés, ruido y motion. El fondo reacciona al cursor y el cursor deja destellos a su paso.</p>
+  </div>
+
+  <div class="hint" id="hint">mové el cursor</div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============================================================
+     WEBGL BACKGROUND — degradé tipo "waterPlane"
+     Parámetros tomados del ShaderGradient original:
+     color1 #52abff · color2 #000000 · color3 #f082ff
+     brightness .6 · uSpeed 1.3 · uStrength 7.5
+     uFrequency 5.5 · uDensity 3.6 · uAmplitude 1
+     rotationZ 50° · rotationY 10°
+  ============================================================ */
+
+  var glCanvas = document.getElementById('gl');
+  var gl = glCanvas.getContext('webgl') || glCanvas.getContext('experimental-webgl');
+
+  var VERT = [
+    "attribute vec2 a_pos;",
+    "void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); }"
+  ].join("\n");
+
+  var FRAG = [
+    "precision highp float;",
+    "uniform vec2 u_resolution;",
+    "uniform float u_time;",
+    "uniform vec2 u_mouse;",
+    "uniform vec3 u_color1;",
+    "uniform vec3 u_color2;",
+    "uniform vec3 u_color3;",
+    "uniform float u_speed;",
+    "uniform float u_strength;",
+    "uniform float u_frequency;",
+    "uniform float u_density;",
+    "uniform float u_amplitude;",
+    "uniform float u_brightness;",
+    "uniform float u_rotation;",
+    "uniform float u_hover;",
+
+    "vec3 mod289v3(vec3 x){ return x - floor(x*(1.0/289.0))*289.0; }",
+    "vec2 mod289v2(vec2 x){ return x - floor(x*(1.0/289.0))*289.0; }",
+    "vec3 permute(vec3 x){ return mod289v3(((x*34.0)+1.0)*x); }",
+
+    "float snoise(vec2 v){",
+    "  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);",
+    "  vec2 i  = floor(v + dot(v, C.yy));",
+    "  vec2 x0 = v - i + dot(i, C.xx);",
+    "  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);",
+    "  vec4 x12 = x0.xyxy + C.xxzz;",
+    "  x12.xy -= i1;",
+    "  i = mod289v2(i);",
+    "  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));",
+    "  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);",
+    "  m = m*m; m = m*m;",
+    "  vec3 x = 2.0 * fract(p * C.www) - 1.0;",
+    "  vec3 h = abs(x) - 0.5;",
+    "  vec3 ox = floor(x + 0.5);",
+    "  vec3 a0 = x - ox;",
+    "  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);",
+    "  vec3 g;",
+    "  g.x  = a0.x  * x0.x  + h.x  * x0.y;",
+    "  g.yz = a0.yz * x12.xz + h.yz * x12.yw;",
+    "  return 130.0 * dot(m, g);",
+    "}",
+
+    "float fbm(vec2 p){",
+    "  float value = 0.0;",
+    "  float amp = 0.5;",
+    "  for(int i=0;i<5;i++){",
+    "    value += amp * snoise(p);",
+    "    p *= 2.0;",
+    "    amp *= 0.5;",
+    "  }",
+    "  return value;",
+    "}",
+
+    "void main(){",
+    "  vec2 uv = gl_FragCoord.xy / u_resolution.xy;",
+    "  vec2 p = uv - 0.5;",
+    "  p.x *= u_resolution.x / u_resolution.y;",
+
+    "  float ang = u_rotation;",
+    "  float s = sin(ang); float c = cos(ang);",
+    "  p = mat2(c, -s, s, c) * p;",
+
+    "  vec2 mouseP = (u_mouse - 0.5);",
+    "  mouseP.x *= u_resolution.x / u_resolution.y;",
+
+    "  float distToMouse = length(p - mouseP);",
+    "  float pull = exp(-distToMouse*2.2) * u_hover;",
+
+    "  vec2 warped = p + mouseP*0.35*u_hover;",
+    "  warped += pull * normalize(p - mouseP + 0.0001) * 0.25;",
+
+    "  float t = u_time * u_speed * 0.15;",
+    "  float n = fbm(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
+    "  n += fbm(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
+    "  n *= (u_amplitude*0.6 + u_strength*0.05);",
+    "  n += pull*1.4;",
+
+    "  float g = clamp(n*0.5+0.5, 0.0, 1.0);",
+
+    "  vec3 col = mix(u_color1, u_color2, smoothstep(0.15, 0.55, g));",
+    "  col = mix(col, u_color3, smoothstep(0.5, 0.95, g));",
+
+    "  float vig = smoothstep(1.05, 0.2, length(p));",
+    "  col *= mix(0.6, 1.0, vig);",
+    "  col *= u_brightness*1.6;",
+    "  col += pull*0.5*vec3(1.0);",
+
+    "  gl_FragColor = vec4(col, 1.0);",
+    "}"
+  ].join("\n");
+
+  function compile(type, src){
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
+      console.error('Shader compile error:', gl.getShaderInfoLog(sh));
+    }
+    return sh;
+  }
+
+  var vShader = compile(gl.VERTEX_SHADER, VERT);
+  var fShader = compile(gl.FRAGMENT_SHADER, FRAG);
+  var program = gl.createProgram();
+  gl.attachShader(program, vShader);
+  gl.attachShader(program, fShader);
+  gl.linkProgram(program);
+  if(!gl.getProgramParameter(program, gl.LINK_STATUS)){
+    console.error('Program link error:', gl.getProgramInfoLog(program));
+  }
+  gl.useProgram(program);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var aPos = gl.getAttribLocation(program, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  var u = {
+    resolution: gl.getUniformLocation(program, 'u_resolution'),
+    time: gl.getUniformLocation(program, 'u_time'),
+    mouse: gl.getUniformLocation(program, 'u_mouse'),
+    color1: gl.getUniformLocation(program, 'u_color1'),
+    color2: gl.getUniformLocation(program, 'u_color2'),
+    color3: gl.getUniformLocation(program, 'u_color3'),
+    speed: gl.getUniformLocation(program, 'u_speed'),
+    strength: gl.getUniformLocation(program, 'u_strength'),
+    frequency: gl.getUniformLocation(program, 'u_frequency'),
+    density: gl.getUniformLocation(program, 'u_density'),
+    amplitude: gl.getUniformLocation(program, 'u_amplitude'),
+    brightness: gl.getUniformLocation(program, 'u_brightness'),
+    rotation: gl.getUniformLocation(program, 'u_rotation'),
+    hover: gl.getUniformLocation(program, 'u_hover')
+  };
+
+  function hexToRgb(hex){
+    var v = parseInt(hex.replace('#',''), 16);
+    return [((v>>16)&255)/255, ((v>>8)&255)/255, (v&255)/255];
+  }
+
+  var COLOR1 = hexToRgb('#52abff');
+  var COLOR2 = hexToRgb('#000000');
+  var COLOR3 = hexToRgb('#f082ff');
+
+  var BASE_SPEED = 1.3, BASE_STRENGTH = 7.5, BASE_FREQ = 5.5, BASE_DENSITY = 3.6, BASE_AMP = 1.0;
+  var BASE_ROT_Z = 50 * Math.PI/180;
+  var BRIGHTNESS = 0.6;
+
+  var mouseNorm = [0.5, 0.5];
+  var targetHover = reducedMotion ? 0.15 : 0.28;
+  var hover = targetHover;
+  var rotationOffset = 0;
+  var targetRotOffset = 0;
+
+  function resize(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = glCanvas.clientWidth, h = glCanvas.clientHeight;
+    glCanvas.width = Math.floor(w*dpr);
+    glCanvas.height = Math.floor(h*dpr);
+    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var start = performance.now();
+  function render(){
+    var time = (performance.now() - start) / 1000;
+
+    hover += (targetHover - hover) * 0.06;
+    rotationOffset += (targetRotOffset - rotationOffset) * 0.04;
+
+    gl.uniform2f(u.resolution, glCanvas.width, glCanvas.height);
+    gl.uniform1f(u.time, time);
+    gl.uniform2f(u.mouse, mouseNorm[0], mouseNorm[1]);
+    gl.uniform3f(u.color1, COLOR1[0], COLOR1[1], COLOR1[2]);
+    gl.uniform3f(u.color2, COLOR2[0], COLOR2[1], COLOR2[2]);
+    gl.uniform3f(u.color3, COLOR3[0], COLOR3[1], COLOR3[2]);
+    gl.uniform1f(u.speed, BASE_SPEED);
+    gl.uniform1f(u.strength, BASE_STRENGTH);
+    gl.uniform1f(u.frequency, BASE_FREQ);
+    gl.uniform1f(u.density, BASE_DENSITY);
+    gl.uniform1f(u.amplitude, BASE_AMP);
+    gl.uniform1f(u.brightness, BRIGHTNESS);
+    gl.uniform1f(u.rotation, BASE_ROT_Z + rotationOffset);
+    gl.uniform1f(u.hover, hover);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+
+  /* ============================================================
+     CURSOR CUSTOM + PARTÍCULAS "VOLCÁN"
+  ============================================================ */
+
+  var hero = document.getElementById('hero');
+  var fx = document.getElementById('fx');
+  var ctx = fx.getContext('2d');
+  var hint = document.getElementById('hint');
+
+  var dpr2 = Math.min(window.devicePixelRatio || 1, 2);
+  function resizeFx(){
+    fx.width = fx.clientWidth * dpr2;
+    fx.height = fx.clientHeight * dpr2;
+    ctx.setTransform(dpr2, 0, 0, dpr2, 0, 0);
+  }
+  window.addEventListener('resize', resizeFx);
+  resizeFx();
+
+  var pointer = { x: fx.clientWidth/2, y: fx.clientHeight/2, active:false };
+  var lastPointer = { x: pointer.x, y: pointer.y };
+  var particles = [];
+  var MAX_PARTICLES = 240;
+
+  function spawnParticles(x, y, count, speedBoost){
+    for(var i=0;i<count;i++){
+      if(particles.length >= MAX_PARTICLES) particles.shift();
+      var angle = -Math.PI/2 + (Math.random()-0.5)*1.5;
+      var spd = (1 + Math.random()*2.6) * (1 + speedBoost*0.18);
+      var tinted = Math.random() < 0.16;
+      particles.push({
+        x:x, y:y,
+        vx: Math.cos(angle)*spd + (Math.random()-0.5)*0.6,
+        vy: Math.sin(angle)*spd,
+        life: 1,
+        decay: 0.018 + Math.random()*0.02,
+        size: 1.2 + Math.random()*2.2,
+        color: tinted ? (Math.random()<0.5 ? '82,171,255' : '240,130,255') : '255,255,255'
+      });
+    }
+  }
+
+  function updateParticles(){
+    ctx.clearRect(0, 0, fx.clientWidth, fx.clientHeight);
+
+    // cursor: círculo blanco
+    ctx.save();
+    ctx.shadowColor = 'rgba(255,255,255,0.9)';
+    ctx.shadowBlur = 16;
+    ctx.beginPath();
+    ctx.arc(pointer.x, pointer.y, 7, 0, Math.PI*2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for(var i=particles.length-1; i>=0; i--){
+      var p = particles[i];
+      p.vy += 0.045;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if(p.life <= 0){ particles.splice(i,1); continue; }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(p.size*p.life, 0.2), 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(' + p.color + ',' + (p.life*0.9) + ')';
+      ctx.fill();
+    }
+    ctx.restore();
+
+    requestAnimationFrame(updateParticles);
+  }
+  requestAnimationFrame(updateParticles);
+
+  var idleSpawnAcc = 0;
+  function frameTick(){
+    idleSpawnAcc++;
+    if(!reducedMotion && pointer.active && idleSpawnAcc % 2 === 0){
+      spawnParticles(pointer.x, pointer.y, 1, 0);
+    }
+    requestAnimationFrame(frameTick);
+  }
+  requestAnimationFrame(frameTick);
+
+  function onMove(clientX, clientY){
+    var rect = hero.getBoundingClientRect();
+    var x = clientX - rect.left;
+    var y = clientY - rect.top;
+
+    var dx = x - lastPointer.x;
+    var dy = y - lastPointer.y;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+
+    pointer.x = x; pointer.y = y; pointer.active = true;
+    mouseNorm[0] = x / rect.width;
+    mouseNorm[1] = 1 - (y / rect.height);
+    targetHover = 1;
+    targetRotOffset = ((x/rect.width) - 0.5) * 0.7;
+
+    if(!reducedMotion){
+      spawnParticles(x, y, Math.min(6, 2 + dist*0.15), dist);
+    }
+
+    lastPointer.x = x; lastPointer.y = y;
+
+    if(hint && !hint.classList.contains('hidden')){
+      hint.classList.add('hidden');
+    }
+  }
+
+  hero.addEventListener('mousemove', function(e){ onMove(e.clientX, e.clientY); });
+  hero.addEventListener('mouseleave', function(){
+    pointer.active = false;
+    targetHover = reducedMotion ? 0.15 : 0.28;
+    targetRotOffset = 0;
+  });
+  hero.addEventListener('touchmove', function(e){
+    if(e.touches && e.touches[0]){
+      onMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive:true });
+
+})();
+</script>
+
+</body>
+</html>

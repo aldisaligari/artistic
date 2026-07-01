@@ -3,16 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>artistic — hero shader 3D</title>
-<meta name="description" content="Hero experimental con degradé 3D reactivo al cursor. Práctica de shaders, geometría y motion." />
+<title>ARTE — hero</title>
+<meta name="description" content="Hero minimal con orbes de degradé animados, tipografía grande y cursor con destellos." />
 <style>
-  :root{
-    --c1:#52abff;
-    --c2:#000000;
-    --c3:#f082ff;
-  }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  html,body{ height:100%; background:#000; overflow-x:hidden; }
+  html,body{ height:100%; background:#050506; overflow-x:hidden; }
   body{
     font-family:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
     color:#fff;
@@ -24,24 +19,68 @@
     height:100vh;
     min-height:560px;
     overflow:hidden;
+    background:#050506;
     cursor:none;
     isolation:isolate;
   }
 
-  .hero canvas{
+  .bg{
     position:absolute;
-    inset:0;
-    display:block;
-    width:100%;
-    height:100%;
+    inset:-25%;
+    z-index:0;
+    transition: transform 0.15s linear;
+    will-change:transform;
   }
 
-  #gl{ z-index:0; }
-  #fx{ z-index:2; pointer-events:none; }
+  .orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(110px);
+    will-change:transform;
+  }
+  .orb1{
+    width:46vw; height:46vw; max-width:640px; max-height:640px;
+    left:6%; top:14%;
+    background:#52abff;
+    opacity:0.5;
+    animation: float1 22s ease-in-out infinite alternate;
+  }
+  .orb2{
+    width:40vw; height:40vw; max-width:560px; max-height:560px;
+    right:6%; top:18%;
+    background:#f082ff;
+    opacity:0.45;
+    animation: float2 26s ease-in-out infinite alternate;
+  }
+  .orb3{
+    width:36vw; height:36vw; max-width:520px; max-height:520px;
+    left:30%; bottom:-8%;
+    background:#7c5cff;
+    opacity:0.35;
+    animation: float3 30s ease-in-out infinite alternate;
+  }
+
+  @keyframes float1{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(6%,8%) scale(1.15); } }
+  @keyframes float2{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(-8%,-5%) scale(0.9); } }
+  @keyframes float3{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(5%,-6%) scale(1.12); } }
+
+  .vignette{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(5,5,6,0) 35%, rgba(5,5,6,0.85) 100%);
+  }
+
+  .grain{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #fx{ position:absolute; inset:0; z-index:3; pointer-events:none; display:block; width:100%; height:100%; }
 
   .hero-content{
     position:relative;
-    z-index:3;
+    z-index:2;
     height:100%;
     display:flex;
     flex-direction:column;
@@ -56,46 +95,53 @@
     font-size:12px;
     letter-spacing:0.35em;
     text-transform:uppercase;
-    opacity:0.65;
-    margin-bottom:18px;
+    opacity:0;
+    margin-bottom:22px;
     font-weight:500;
+    color:rgba(255,255,255,0.65);
+    animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay:0.1s;
   }
 
   h1{
-    font-size:clamp(48px, 11vw, 148px);
-    line-height:0.95;
-    font-weight:700;
-    letter-spacing:-0.03em;
-    background:linear-gradient(120deg, #ffffff 0%, #d9e9ff 45%, #ffe3fb 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    text-shadow:0 0 60px rgba(82,171,255,0.25);
+    display:flex;
+    gap:0.01em;
+    font-size:clamp(90px, 20vw, 260px);
+    line-height:0.88;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    color:#fff;
   }
+  h1 span{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(48px);
+    animation: reveal 1s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  h1 span:nth-child(1){ animation-delay:0.08s; }
+  h1 span:nth-child(2){ animation-delay:0.18s; }
+  h1 span:nth-child(3){ animation-delay:0.28s; }
+  h1 span:nth-child(4){ animation-delay:0.38s; }
+
+  @keyframes reveal{ to{ opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp{ to{ opacity:1; } }
 
   p.sub{
-    margin-top:20px;
-    max-width:560px;
+    margin-top:24px;
+    max-width:520px;
     font-size:clamp(14px,1.6vw,18px);
     line-height:1.55;
-    opacity:0.8;
+    opacity:0;
     font-weight:400;
+    color:rgba(255,255,255,0.75);
+    animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) forwards;
+    animation-delay:0.55s;
   }
 
-  .hint{
-    position:absolute;
-    bottom:34px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:11px;
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    opacity:0.55;
-    transition:opacity 0.6s ease;
-    z-index:3;
-    pointer-events:none;
+  @media (prefers-reduced-motion: reduce){
+    .orb{ animation:none !important; }
+    h1 span, .eyebrow, p.sub{ animation:none !important; opacity:1 !important; transform:none !important; }
   }
-  .hint.hidden{ opacity:0; }
 
   @media (max-width: 640px){
     .hero{ cursor:auto; }
@@ -106,19 +152,24 @@
 <body>
 
 <section class="hero" id="hero">
-  <canvas id="gl"></canvas>
+  <div class="bg" id="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
   <canvas id="fx"></canvas>
 
   <div class="hero-content">
-    <div class="eyebrow">artistic · shader lab</div>
-    <h1>ARTISTIC</h1>
-    <p class="sub">Un playground de degradés, geometría y motion. La superficie es 3D de verdad: se deforma y gira con el cursor.</p>
+    <div class="eyebrow">artistic · lab</div>
+    <h1 aria-label="ARTE">
+      <span>A</span><span>R</span><span>T</span><span>E</span>
+    </h1>
+    <p class="sub">Un playground de motion, degradés y tipografía. Movete por la pantalla.</p>
   </div>
-
-  <div class="hint" id="hint">mové el cursor</div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -126,253 +177,35 @@
   var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ============================================================
-     FONDO 3D REAL — Three.js
-     Un PlaneGeometry subdividido cuyos vértices se desplazan en Z
-     con ruido (fbm), iluminado con luz difusa + especular + fresnel,
-     y filmado con una cámara en perspectiva real (hay profundidad
-     de verdad, no un truco de sombreado sobre una superficie plana).
-     Parámetros de referencia del ShaderGradient original:
-     color1 #52abff · color2 #000000 · color3 #f082ff
-     brightness .6 · uSpeed 1.3 · uStrength 7.5
-     uFrequency 5.5 · uDensity 3.6 · uAmplitude 1
-     rotationY 10° · rotationZ 50° · fov 45 · cDistance 3.61
+     PARALLAX DE FONDO (orbes) — sigue al cursor, suavizado
   ============================================================ */
+  var hero = document.getElementById('hero');
+  var bg = document.getElementById('bg');
 
-  var glCanvas = document.getElementById('gl');
+  var parX = 0, parY = 0, targetParX = 0, targetParY = 0;
 
-  var VERT = [
-    "uniform float u_time;",
-    "uniform vec2 u_mouse;",
-    "uniform float u_speed;",
-    "uniform float u_strength;",
-    "uniform float u_frequency;",
-    "uniform float u_density;",
-    "uniform float u_amplitude;",
-    "uniform float u_hover;",
-
-    "varying vec3 vNormal;",
-    "varying vec3 vViewPosition;",
-    "varying float vHeight;",
-
-    "vec3 mod289v3(vec3 x){ return x - floor(x*(1.0/289.0))*289.0; }",
-    "vec2 mod289v2(vec2 x){ return x - floor(x*(1.0/289.0))*289.0; }",
-    "vec3 permute(vec3 x){ return mod289v3(((x*34.0)+1.0)*x); }",
-
-    "float snoise(vec2 v){",
-    "  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);",
-    "  vec2 i  = floor(v + dot(v, C.yy));",
-    "  vec2 x0 = v - i + dot(i, C.xx);",
-    "  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);",
-    "  vec4 x12 = x0.xyxy + C.xxzz;",
-    "  x12.xy -= i1;",
-    "  i = mod289v2(i);",
-    "  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));",
-    "  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);",
-    "  m = m*m; m = m*m;",
-    "  vec3 x = 2.0 * fract(p * C.www) - 1.0;",
-    "  vec3 h = abs(x) - 0.5;",
-    "  vec3 ox = floor(x + 0.5);",
-    "  vec3 a0 = x - ox;",
-    "  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);",
-    "  vec3 g;",
-    "  g.x  = a0.x  * x0.x  + h.x  * x0.y;",
-    "  g.yz = a0.yz * x12.xz + h.yz * x12.yw;",
-    "  return 130.0 * dot(m, g);",
-    "}",
-
-    "float fbm5(vec2 p){",
-    "  float value = 0.0; float amp = 0.5;",
-    "  for(int i=0;i<5;i++){ value += amp*snoise(p); p *= 2.0; amp *= 0.5; }",
-    "  return value;",
-    "}",
-    "float fbm3(vec2 p){",
-    "  float value = 0.0; float amp = 0.5;",
-    "  for(int i=0;i<3;i++){ value += amp*snoise(p); p *= 2.0; amp *= 0.5; }",
-    "  return value;",
-    "}",
-
-    "float heightAt(vec2 p, float t, vec2 mouseP, float pull, bool cheap){",
-    "  vec2 warped = p + mouseP*0.35*u_hover;",
-    "  warped += pull * normalize(p - mouseP + 0.0001) * 0.25;",
-    "  float n;",
-    "  if(cheap){",
-    "    n = fbm3(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
-    "    n += fbm3(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
-    "  } else {",
-    "    n = fbm5(warped*u_frequency*0.55 + vec2(t, -t*0.7));",
-    "    n += fbm5(warped*u_density*0.85 - vec2(t*0.5, t*0.3)) * 0.5;",
-    "  }",
-    "  n *= (u_amplitude*0.6 + u_strength*0.05);",
-    "  n += pull*1.4;",
-    "  return n;",
-    "}",
-
-    "void main(){",
-    "  vec2 p = uv - 0.5;",
-    "  vec2 mouseP = u_mouse - 0.5;",
-    "  float distToMouse = length(p - mouseP);",
-    "  float pull = exp(-distToMouse*2.2) * u_hover;",
-    "  float t = u_time * u_speed * 0.15;",
-
-    "  float h = heightAt(p, t, mouseP, pull, false);",
-
-    "  float eps = 0.01;",
-    "  float hL = heightAt(p - vec2(eps,0.0), t, mouseP, pull, true);",
-    "  float hR = heightAt(p + vec2(eps,0.0), t, mouseP, pull, true);",
-    "  float hD = heightAt(p - vec2(0.0,eps), t, mouseP, pull, true);",
-    "  float hU = heightAt(p + vec2(0.0,eps), t, mouseP, pull, true);",
-
-    "  vec3 localNormal = normalize(vec3((hL-hR)*4.2, (hD-hU)*4.2, 1.0));",
-    "  vec3 displaced = position + normal * h * 0.95;",
-
-    "  vNormal = normalize(normalMatrix * localNormal);",
-    "  vHeight = h;",
-
-    "  vec4 mvPosition = modelViewMatrix * vec4(displaced, 1.0);",
-    "  vViewPosition = -mvPosition.xyz;",
-    "  gl_Position = projectionMatrix * mvPosition;",
-    "}"
-  ].join("\n");
-
-  var FRAG = [
-    "precision highp float;",
-    "uniform vec3 u_color1;",
-    "uniform vec3 u_color2;",
-    "uniform vec3 u_color3;",
-    "uniform float u_brightness;",
-
-    "varying vec3 vNormal;",
-    "varying vec3 vViewPosition;",
-    "varying float vHeight;",
-
-    "void main(){",
-    "  vec3 nrm = normalize(vNormal);",
-    "  vec3 viewDir = normalize(vViewPosition);",
-    "  vec3 lightDir = normalize(vec3(0.35, 0.55, 0.75));",
-
-    "  float diff = max(dot(nrm, lightDir), 0.0);",
-    "  vec3 halfDir = normalize(lightDir + viewDir);",
-    "  float spec = pow(max(dot(nrm, halfDir), 0.0), 26.0);",
-    "  float fresnel = pow(1.0 - max(dot(viewDir, nrm), 0.0), 3.0);",
-
-    "  float g = clamp(vHeight*0.5+0.5, 0.0, 1.0);",
-    "  g = clamp((g-0.5)*1.35+0.5, 0.0, 1.0);",
-
-    "  vec3 col = mix(u_color1, u_color2, smoothstep(0.36, 0.46, g));",
-    "  col = mix(col, u_color3, smoothstep(0.75, 0.83, g));",
-
-    "  col *= (0.48 + diff*0.78);",
-    "  col += spec * 0.5 * mix(vec3(1.0), u_color3, 0.35);",
-    "  col += fresnel * 0.16 * u_color1;",
-
-    "  col *= u_brightness * 1.6;",
-
-    "  gl_FragColor = vec4(col, 1.0);",
-    "}"
-  ].join("\n");
-
-  function hexToRgb(hex){
-    var v = parseInt(hex.replace('#',''), 16);
-    return [((v>>16)&255)/255, ((v>>8)&255)/255, (v&255)/255];
+  function parallaxLoop(){
+    if(!reducedMotion){
+      parX += (targetParX - parX) * 0.06;
+      parY += (targetParY - parY) * 0.06;
+      bg.style.transform = 'translate(' + parX + 'px, ' + parY + 'px)';
+    }
+    requestAnimationFrame(parallaxLoop);
   }
-
-  var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  renderer.setClearColor(0x000000, 1);
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0, 3.61);
-  camera.lookAt(0, 0, 0);
-
-  var group = new THREE.Group();
-  scene.add(group);
-
-  var geometry = new THREE.PlaneGeometry(9, 9, 140, 140);
-
-  var c1 = hexToRgb('#52abff');
-  var c2 = hexToRgb('#000000');
-  var c3 = hexToRgb('#f082ff');
-
-  var uniforms = {
-    u_time: { value: 0 },
-    u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
-    u_speed: { value: 1.3 },
-    u_strength: { value: 7.5 },
-    u_frequency: { value: 5.5 },
-    u_density: { value: 3.6 },
-    u_amplitude: { value: 1.0 },
-    u_brightness: { value: 0.6 },
-    u_hover: { value: reducedMotion ? 0.15 : 0.28 },
-    u_color1: { value: new THREE.Vector3(c1[0], c1[1], c1[2]) },
-    u_color2: { value: new THREE.Vector3(c2[0], c2[1], c2[2]) },
-    u_color3: { value: new THREE.Vector3(c3[0], c3[1], c3[2]) }
-  };
-
-  var material = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: VERT,
-    fragmentShader: FRAG,
-    side: THREE.DoubleSide
-  });
-
-  var mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = -1.3;
-  mesh.rotation.set(0, 10 * Math.PI/180, 50 * Math.PI/180);
-  group.add(mesh);
-
-  function resize(){
-    var w = glCanvas.clientWidth, h = glCanvas.clientHeight;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  var mouseNorm = [0.5, 0.5];
-  var targetHover = reducedMotion ? 0.15 : 0.28;
-  var hoverVal = targetHover;
-  var targetTiltX = 0, targetTiltY = 0, tiltX = 0, tiltY = 0;
-
-  var clock = new THREE.Clock();
-  function animate(){
-    var t = clock.getElapsedTime();
-
-    hoverVal += (targetHover - hoverVal) * 0.06;
-    tiltX += (targetTiltX - tiltX) * 0.09;
-    tiltY += (targetTiltY - tiltY) * 0.09;
-
-    var idleX = reducedMotion ? 0 : Math.sin(t * 0.22) * 0.06;
-    var idleY = reducedMotion ? 0 : Math.cos(t * 0.16) * 0.09;
-
-    group.rotation.x = tiltX + idleX;
-    group.rotation.y = tiltY + idleY;
-
-    uniforms.u_time.value = t;
-    uniforms.u_mouse.value.set(mouseNorm[0], mouseNorm[1]);
-    uniforms.u_hover.value = hoverVal;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-  }
-  requestAnimationFrame(animate);
+  requestAnimationFrame(parallaxLoop);
 
   /* ============================================================
      CURSOR CUSTOM + PARTÍCULAS "VOLCÁN"
   ============================================================ */
 
-  var hero = document.getElementById('hero');
   var fx = document.getElementById('fx');
   var ctx = fx.getContext('2d');
-  var hint = document.getElementById('hint');
 
-  var dpr2 = Math.min(window.devicePixelRatio || 1, 2);
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
   function resizeFx(){
-    fx.width = fx.clientWidth * dpr2;
-    fx.height = fx.clientHeight * dpr2;
-    ctx.setTransform(dpr2, 0, 0, dpr2, 0, 0);
+    fx.width = fx.clientWidth * dpr;
+    fx.height = fx.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   window.addEventListener('resize', resizeFx);
   resizeFx();
@@ -387,7 +220,7 @@
       if(particles.length >= MAX_PARTICLES) particles.shift();
       var angle = -Math.PI/2 + (Math.random()-0.5)*1.5;
       var spd = (1 + Math.random()*2.6) * (1 + speedBoost*0.18);
-      var tinted = Math.random() < 0.16;
+      var tinted = Math.random() < 0.18;
       particles.push({
         x:x, y:y,
         vx: Math.cos(angle)*spd + (Math.random()-0.5)*0.6,
@@ -452,29 +285,21 @@
     var dist = Math.sqrt(dx*dx + dy*dy);
 
     pointer.x = x; pointer.y = y; pointer.active = true;
-    mouseNorm[0] = x / rect.width;
-    mouseNorm[1] = 1 - (y / rect.height);
-    targetHover = 1;
+
+    targetParX = ((x/rect.width) - 0.5) * -40;
+    targetParY = ((y/rect.height) - 0.5) * -40;
 
     if(!reducedMotion){
-      targetTiltY = ((x/rect.width) - 0.5) * 0.62;
-      targetTiltX = ((y/rect.height) - 0.5) * -0.42;
       spawnParticles(x, y, Math.min(6, 2 + dist*0.15), dist);
     }
 
     lastPointer.x = x; lastPointer.y = y;
-
-    if(hint && !hint.classList.contains('hidden')){
-      hint.classList.add('hidden');
-    }
   }
 
   hero.addEventListener('mousemove', function(e){ onMove(e.clientX, e.clientY); });
   hero.addEventListener('mouseleave', function(){
     pointer.active = false;
-    targetHover = reducedMotion ? 0.15 : 0.28;
-    targetTiltX = 0;
-    targetTiltY = 0;
+    targetParX = 0; targetParY = 0;
   });
   hero.addEventListener('touchmove', function(e){
     if(e.touches && e.touches[0]){

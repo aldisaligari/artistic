@@ -128,17 +128,43 @@
   .work-item:last-child{ border-bottom:1px solid var(--line); }
   .work-visual{
     aspect-ratio:4/3; border-radius:2px; position:relative; overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
+    display:block; background:#0a0a0a; cursor:pointer;
   }
-  .work-visual .wv-label{
-    font-family:var(--display); font-weight:900; text-transform:uppercase;
-    font-size:clamp(28px,4vw,56px); color:rgba(255,255,255,.92); text-align:center; padding:20px;
-    letter-spacing:-.01em;
+  .work-visual.entropia{ --img:url("entropia.webp"); }
+  .work-visual.crew{ --img:url("crew.webp"); }
+  .work-visual.aldi{ --img:url("aldi.webp"); }
+  .work-visual .wv-base, .work-visual .wv-color{
+    position:absolute; inset:0; background-image:var(--img); background-size:cover; background-position:center;
   }
-  .work-visual.entropia{ background:linear-gradient(155deg,#efece6,#c9c4b8 60%,#0a0a0a); }
-  .work-visual.entropia .wv-label{ color:#0a0a0a; font-family:'Times New Roman', serif; font-weight:400; text-transform:none; font-style:italic; }
-  .work-visual.crew{ background:linear-gradient(155deg,#101010,#1c3fff 130%); }
-  .work-visual.aldi{ background:linear-gradient(155deg,#111,#3a3a3a 40%,#1c3fff); }
+  .work-visual .wv-base{ filter:grayscale(92%) brightness(.5) contrast(1.08); transition:filter .5s ease; }
+  .work-visual .wv-color{
+    -webkit-mask-image:radial-gradient(circle 150px at var(--mx,50%) var(--my,50%), #000 55%, transparent 100%);
+    mask-image:radial-gradient(circle 150px at var(--mx,50%) var(--my,50%), #000 55%, transparent 100%);
+    opacity:0; transition:opacity .35s ease;
+  }
+  .work-visual:hover .wv-base{ filter:grayscale(70%) brightness(.62) contrast(1.05); }
+  .work-visual:hover .wv-color, .work-visual:focus-visible .wv-color{ opacity:1; }
+  .work-visual .wv-dot{
+    position:absolute; width:10px; height:10px; border-radius:50%; background:var(--accent);
+    left:var(--mx,50%); top:var(--my,50%); transform:translate(-50%,-50%);
+    opacity:0; transition:opacity .3s ease, left .12s ease-out, top .12s ease-out; pointer-events:none;
+    box-shadow:0 0 28px 8px rgba(28,63,255,.55);
+  }
+  .work-visual:hover .wv-dot{ opacity:1; }
+  .work-visual .wv-tag{
+    position:absolute; left:14px; bottom:12px; z-index:3;
+    display:flex; align-items:center; gap:6px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    color:#fff; opacity:.8; pointer-events:none;
+    text-shadow:0 1px 8px rgba(0,0,0,.65);
+  }
+  .work-visual .wv-tag svg{ width:11px; height:11px; transition:transform .3s ease; }
+  .work-visual:hover .wv-tag svg{ transform:translate(2px,-2px); }
+  @media (hover:none){
+    .work-visual .wv-color{ opacity:1; -webkit-mask-image:none; mask-image:none; }
+    .work-visual .wv-dot{ display:none; }
+    .work-visual .wv-base{ filter:grayscale(0%) brightness(1) contrast(1); }
+  }
 
   .work-body .idx{ font-size:12px; color:var(--accent); margin-bottom:14px; letter-spacing:.1em; }
   .work-body h3{
@@ -257,7 +283,12 @@
   <section class="work" id="work">
 
     <article class="work-item" data-reveal>
-      <div class="work-visual entropia"><div class="wv-label">entropía</div></div>
+      <a class="work-visual entropia" href="https://entropiaestudioarg.com/" target="_blank" rel="noopener" aria-label="Ver entropiaestudioarg.com">
+        <span class="wv-base"></span>
+        <span class="wv-color"></span>
+        <span class="wv-dot" aria-hidden="true"></span>
+        <span class="wv-tag">entropiaestudioarg.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
       <div class="work-body">
         <div class="idx">002 / ENTROPÍA ESTUDIO</div>
         <h3 class="i18n" data-es="Música, arte y proceso" data-en="Music, art and process">Música, arte y proceso</h3>
@@ -273,7 +304,12 @@
     </article>
 
     <article class="work-item" data-reveal>
-      <div class="work-visual crew"><div class="wv-label">CREW CO</div></div>
+      <a class="work-visual crew" href="https://crewco.site/" target="_blank" rel="noopener" aria-label="Ver crewco.site">
+        <span class="wv-base"></span>
+        <span class="wv-color"></span>
+        <span class="wv-dot" aria-hidden="true"></span>
+        <span class="wv-tag">crewco.site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
       <div class="work-body">
         <div class="idx">001 / CREW CO</div>
         <h3 class="i18n" data-es="Profesionales del under" data-en="Professionals of the underground">Profesionales del under</h3>
@@ -289,7 +325,12 @@
     </article>
 
     <article class="work-item" data-reveal>
-      <div class="work-visual aldi"><div class="wv-label">ARTE</div></div>
+      <a class="work-visual aldi" href="https://aldisaligari.com/" target="_blank" rel="noopener" aria-label="Ver aldisaligari.com">
+        <span class="wv-base"></span>
+        <span class="wv-color"></span>
+        <span class="wv-dot" aria-hidden="true"></span>
+        <span class="wv-tag">aldisaligari.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
       <div class="work-body">
         <div class="idx">003 / ALDISALIGARI.COM</div>
         <h3 class="i18n" data-es="Proyecto musical propio" data-en="Own music project">Proyecto musical propio</h3>
@@ -377,6 +418,19 @@
       const btn = e.target.closest('[data-set]');
       if(!btn) return;
       setLang(btn.getAttribute('data-set'));
+    });
+  })();
+
+  // --- work-visual interactive window: spotlight follows the cursor ---
+  (function(){
+    document.querySelectorAll('.work-visual').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        const rect = el.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        el.style.setProperty('--mx', x + '%');
+        el.style.setProperty('--my', y + '%');
+      });
     });
   })();
 

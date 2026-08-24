@@ -241,8 +241,6 @@
   .brand-hover:hover .ch:nth-child(1){ transform:translateY(-5px) rotate(-8deg); color:var(--accent); }
   .brand-hover:hover .ch:nth-child(2){ transform:translateY(5px) rotate(8deg); color:var(--accent); }
 
-  h1.title .line > span{ transform-perspective:700px; }
-
   /* ---------- PLANS ---------- */
   .plans{ padding:80px var(--pad) 100px; }
   .plans-intro p{ max-width:56ch; color:var(--muted); font-size:16px; line-height:1.7; margin-bottom:48px; }
@@ -677,12 +675,12 @@
             const rect = heroTitle.getBoundingClientRect();
             const px = (e.clientX - rect.left) / rect.width - 0.5;
             words.forEach(function(word){
-              gsap.to(word, { rotateY: px * 12, duration: 0.6, ease: "power3.out" });
+              gsap.to(word, { rotationY: px * 12, transformPerspective: 700, duration: 0.6, ease: "power3.out" });
             });
           });
           heroTitle.addEventListener('mouseleave', function(){
             words.forEach(function(word){
-              gsap.to(word, { rotateY: 0, duration: 0.9, ease: "elastic.out(1,0.5)" });
+              gsap.to(word, { rotationY: 0, duration: 0.9, ease: "elastic.out(1,0.5)" });
             });
           });
         }

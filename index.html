@@ -1,313 +1,434 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ARTE — hero</title>
-<meta name="description" content="Hero minimal con orbes de degradé animados, tipografía grande y cursor con destellos." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aldana Saligari — Front-end / Motion / Creative Production</title>
+<meta name="description" content="Portfolio de Aldana Saligari — desarrollo front-end, motion y producción creativa. Entropía Estudio, CREW CO, aldisaligari.com." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Roboto+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
 <style>
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  html,body{ height:100%; background:#050506; overflow-x:hidden; }
+  :root{
+    --bg:#f7f6f3;
+    --fg:#0a0a0a;
+    --muted:#6b6b66;
+    --line:rgba(10,10,10,0.14);
+    --accent:#1c3fff;
+    --mono: 'Roboto Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --display: 'Unbounded', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --pad: clamp(20px, 4vw, 64px);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:auto;}
   body{
-    font-family:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
-    color:#fff;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:var(--mono);
+    font-size:15px;
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
 
-  .hero{
-    position:relative;
-    width:100%;
-    height:100vh;
-    min-height:560px;
-    overflow:hidden;
-    background:#050506;
-    cursor:none;
-    isolation:isolate;
-  }
+  ::selection{ background:var(--accent); color:#fff; }
 
-  .bg{
-    position:absolute;
-    inset:-25%;
-    z-index:0;
-    transition: transform 0.15s linear;
-    will-change:transform;
-  }
-
-  .orb{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(110px);
-    will-change:transform;
-  }
-  .orb1{
-    width:46vw; height:46vw; max-width:640px; max-height:640px;
-    left:6%; top:14%;
-    background:#52abff;
-    opacity:0.5;
-    animation: float1 22s ease-in-out infinite alternate;
-  }
-  .orb2{
-    width:40vw; height:40vw; max-width:560px; max-height:560px;
-    right:6%; top:18%;
-    background:#f082ff;
-    opacity:0.45;
-    animation: float2 26s ease-in-out infinite alternate;
-  }
-  .orb3{
-    width:36vw; height:36vw; max-width:520px; max-height:520px;
-    left:30%; bottom:-8%;
-    background:#7c5cff;
-    opacity:0.35;
-    animation: float3 30s ease-in-out infinite alternate;
-  }
-
-  @keyframes float1{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(6%,8%) scale(1.15); } }
-  @keyframes float2{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(-8%,-5%) scale(0.9); } }
-  @keyframes float3{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(5%,-6%) scale(1.12); } }
-
-  .vignette{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
-    background:radial-gradient(ellipse at center, rgba(5,5,6,0) 35%, rgba(5,5,6,0.85) 100%);
-  }
+  a{ color:inherit; text-decoration:none; }
 
   .grain{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
-    opacity:0.05;
-    mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    opacity:.35; mix-blend-mode:multiply;
+    background-image:radial-gradient(rgba(0,0,0,.35) .6px, transparent .6px);
+    background-size:3px 3px;
   }
 
-  #fx{ position:absolute; inset:0; z-index:3; pointer-events:none; display:block; width:100%; height:100%; }
+  .container{ padding-left:var(--pad); padding-right:var(--pad); }
 
-  .hero-content{
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px var(--pad);
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    mix-blend-mode:difference; color:#fff;
+  }
+  header nav{ display:flex; gap:28px; }
+  header nav a{ opacity:.7; transition:opacity .25s ease; position:relative; }
+  header nav a:hover{ opacity:1; }
+  .lang-toggle{ display:flex; gap:6px; cursor:pointer; opacity:.7; }
+  .lang-toggle span{ padding:2px 6px; border:1px solid currentColor; border-radius:20px; transition:opacity .2s; }
+  .lang-toggle span.active{ opacity:1; }
+  .lang-toggle span:not(.active){ opacity:.4; }
+  .brand{ font-family:var(--display); font-weight:700; letter-spacing:0; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
     position:relative;
-    z-index:2;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:0 24px;
-    pointer-events:none;
+    padding-top:120px; padding-bottom:60px;
   }
-
-  .eyebrow{
-    font-size:12px;
-    letter-spacing:0.35em;
+  .hero .kicker{
+    font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+    margin-bottom:22px; display:flex; gap:10px; align-items:center;
+  }
+  .hero .kicker .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; }
+  h1.title{
+    font-family:var(--display);
+    font-weight:900;
     text-transform:uppercase;
-    opacity:0;
-    margin-bottom:22px;
-    font-weight:500;
-    color:rgba(255,255,255,0.65);
-    animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay:0.1s;
+    font-size:clamp(48px, 10vw, 138px);
+    line-height:.92;
+    letter-spacing:-.01em;
+  }
+  h1.title .line{ display:block; overflow:hidden; }
+  h1.title .line span{ display:inline-block; will-change:transform; }
+  h1.title .accent{ color:var(--accent); }
+  .hero .sub{
+    margin-top:34px; max-width:560px; font-size:16px; line-height:1.7; color:var(--muted);
+  }
+  .hero .sub b{ color:var(--fg); font-weight:600; }
+
+  .scroll-cue{
+    position:absolute; bottom:36px; left:var(--pad);
+    font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+    display:flex; align-items:center; gap:10px;
+  }
+  .scroll-cue .bar{ width:1px; height:34px; background:var(--line); position:relative; overflow:hidden; }
+  .scroll-cue .bar::after{
+    content:''; position:absolute; top:-100%; left:0; width:100%; height:100%;
+    background:var(--accent); animation:scrollcue 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollcue{ 0%{top:-100%;} 60%{top:100%;} 100%{top:100%;} }
+
+  /* ---------- SECTION LABELS ---------- */
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:26px var(--pad);
+    border-top:1px solid var(--line);
+    font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  }
+  .section-head .n{ color:var(--accent); }
+
+  /* ---------- WORK ---------- */
+  .work{ padding-bottom:20px; }
+  .work-item{
+    border-top:1px solid var(--line);
+    padding:56px var(--pad);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .work-item:last-child{ border-bottom:1px solid var(--line); }
+  .work-visual{
+    aspect-ratio:4/3; border-radius:2px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .work-visual .wv-label{
+    font-family:var(--display); font-weight:900; text-transform:uppercase;
+    font-size:clamp(28px,4vw,56px); color:rgba(255,255,255,.92); text-align:center; padding:20px;
+    letter-spacing:-.01em;
+  }
+  .work-visual.entropia{ background:linear-gradient(155deg,#efece6,#c9c4b8 60%,#0a0a0a); }
+  .work-visual.entropia .wv-label{ color:#0a0a0a; font-family:'Times New Roman', serif; font-weight:400; text-transform:none; font-style:italic; }
+  .work-visual.crew{ background:linear-gradient(155deg,#101010,#1c3fff 130%); }
+  .work-visual.aldi{ background:linear-gradient(155deg,#111,#3a3a3a 40%,#1c3fff); }
+
+  .work-body .idx{ font-size:12px; color:var(--accent); margin-bottom:14px; letter-spacing:.1em; }
+  .work-body h3{
+    font-family:var(--display); font-weight:700; text-transform:uppercase;
+    font-size:clamp(24px,3vw,40px); line-height:1.05; margin-bottom:16px;
+  }
+  .work-body p{ color:var(--muted); max-width:46ch; margin-bottom:22px; }
+  .work-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
+  .work-tags span{
+    font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px; color:var(--muted);
+  }
+  .work-link{
+    display:inline-flex; align-items:center; gap:10px; font-size:13px;
+    text-transform:uppercase; letter-spacing:.08em; font-weight:500;
+    padding-bottom:4px; border-bottom:1px solid var(--fg);
+  }
+  .work-link svg{ width:14px; height:14px; transition:transform .3s ease; }
+  .work-link:hover svg{ transform:translate(3px,-3px); }
+
+  @media (max-width:820px){
+    .work-item{ grid-template-columns:1fr; }
   }
 
-  h1{
-    display:flex;
-    gap:0.01em;
-    font-size:clamp(90px, 20vw, 260px);
-    line-height:0.88;
-    font-weight:800;
-    letter-spacing:-0.04em;
-    color:#fff;
+  /* ---------- ABOUT ---------- */
+  .about{ padding:90px var(--pad); border-top:1px solid var(--line); }
+  .about-grid{ display:grid; grid-template-columns:1fr 1.4fr; gap:60px; }
+  .about h2{
+    font-family:var(--display); font-weight:900; text-transform:uppercase;
+    font-size:clamp(32px,5vw,58px); line-height:1; position:sticky; top:120px; align-self:start;
   }
-  h1 span{
-    display:inline-block;
-    opacity:0;
-    transform:translateY(48px);
-    animation: reveal 1s cubic-bezier(.16,1,.3,1) forwards;
-  }
-  h1 span:nth-child(1){ animation-delay:0.08s; }
-  h1 span:nth-child(2){ animation-delay:0.18s; }
-  h1 span:nth-child(3){ animation-delay:0.28s; }
-  h1 span:nth-child(4){ animation-delay:0.38s; }
+  .about p{ font-size:16px; line-height:1.85; color:var(--muted); max-width:62ch; }
+  .about p + p{ margin-top:20px; }
+  .about p b{ color:var(--fg); font-weight:600; }
+  @media (max-width:820px){ .about-grid{ grid-template-columns:1fr; } .about h2{ position:static; } }
 
-  @keyframes reveal{ to{ opacity:1; transform:translateY(0); } }
-  @keyframes fadeUp{ to{ opacity:1; } }
+  /* ---------- MARQUEE ---------- */
+  .marquee-wrap{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:26px 0; overflow:hidden; }
+  .marquee-track{ display:flex; width:max-content; animation:marquee 32s linear infinite; }
+  .marquee-track span{
+    font-family:var(--display); font-weight:700; text-transform:uppercase;
+    font-size:clamp(22px,3.4vw,42px); padding:0 28px; white-space:nowrap; color:var(--fg); opacity:.9;
+  }
+  .marquee-track span:nth-child(odd){ color:var(--accent); }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
 
-  p.sub{
-    margin-top:24px;
-    max-width:520px;
-    font-size:clamp(14px,1.6vw,18px);
-    line-height:1.55;
-    opacity:0;
-    font-weight:400;
-    color:rgba(255,255,255,0.75);
-    animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) forwards;
-    animation-delay:0.55s;
+  /* ---------- CONTACT ---------- */
+  .contact{ padding:120px var(--pad) 80px; text-align:center; }
+  .contact .kicker{ font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:24px; }
+  .contact a.big{
+    font-family:var(--display); font-weight:900; text-transform:uppercase;
+    font-size:clamp(32px,8vw,110px); line-height:1; display:inline-block;
+  }
+  .contact a.big:hover{ color:var(--accent); }
+  .contact-links{ margin-top:44px; display:flex; gap:26px; justify-content:center; flex-wrap:wrap;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .contact-links a{ border-bottom:1px solid transparent; padding-bottom:3px; transition:border-color .2s, color .2s; }
+  .contact-links a:hover{ border-color:var(--fg); color:var(--fg); }
+
+  footer{
+    padding:26px var(--pad); border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; font-size:11px; color:var(--muted);
+    letter-spacing:.05em; text-transform:uppercase;
   }
 
-  @media (prefers-reduced-motion: reduce){
-    .orb{ animation:none !important; }
-    h1 span, .eyebrow, p.sub{ animation:none !important; opacity:1 !important; transform:none !important; }
-  }
-
-  @media (max-width: 640px){
-    .hero{ cursor:auto; }
-    #fx{ display:none; }
-  }
+  /* Reveal-on-scroll is progressive enhancement: content is visible by default
+     (works with zero JS / if any CDN fails). JS below adds .pre-reveal itself
+     right before observing, so there's never a permanently-hidden state. */
+  [data-reveal]{ transition:opacity .9s cubic-bezier(.16,.84,.44,1), transform .9s cubic-bezier(.16,.84,.44,1); }
+  [data-reveal].pre-reveal{ opacity:0; transform:translateY(28px); }
 </style>
 </head>
 <body>
 
-<section class="hero" id="hero">
-  <div class="bg" id="bg">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-  </div>
-  <div class="vignette"></div>
-  <div class="grain"></div>
-  <canvas id="fx"></canvas>
+<div class="grain"></div>
 
-  <div class="hero-content">
-    <div class="eyebrow">artistic · lab</div>
-    <h1 aria-label="ARTE">
-      <span>A</span><span>R</span><span>T</span><span>E</span>
-    </h1>
-    <p class="sub">Un playground de motion, degradés y tipografía. Movete por la pantalla.</p>
+<header>
+  <a href="#top" class="brand">AS</a>
+  <nav>
+    <a href="#work"><span class="i18n" data-es="Trabajo" data-en="Work">Trabajo</span></a>
+    <a href="#about"><span class="i18n" data-es="Sobre mí" data-en="About">Sobre mí</span></a>
+    <a href="#contact"><span class="i18n" data-es="Contacto" data-en="Contact">Contacto</span></a>
+  </nav>
+  <div class="lang-toggle" id="langToggle">
+    <span data-set="es" class="active">ES</span>
+    <span data-set="en">EN</span>
   </div>
-</section>
+</header>
+
+<main id="top">
+
+  <section class="hero container">
+    <div class="kicker">
+      <span class="dot"></span>
+      <span class="i18n" data-es="Mendoza, Argentina — Disponible para proyectos" data-en="Mendoza, Argentina — Available for projects">Mendoza, Argentina — Disponible para proyectos</span>
+    </div>
+    <h1 class="title">
+      <span class="line"><span>ALDANA</span></span>
+      <span class="line"><span>SALIGARI<span class="accent">.</span></span></span>
+    </h1>
+    <p class="sub i18n" data-es="Front-end developer y productora creativa. Construyo interfaces con &lt;b&gt;motion&lt;/b&gt; e identidad — del código al escenario." data-en="Front-end developer and creative producer. I build interfaces with &lt;b&gt;motion&lt;/b&gt; and identity — from code to the stage.">
+      Front-end developer y productora creativa. Construyo interfaces con <b>motion</b> e identidad — del código al escenario.
+    </p>
+    <div class="scroll-cue">
+      <span class="i18n" data-es="Scroll" data-en="Scroll">Scroll</span>
+      <span class="bar"></span>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <span><span class="n">01</span> — <span class="i18n" data-es="Trabajo seleccionado" data-en="Selected work">Trabajo seleccionado</span></span>
+    <span>2023 — 2026</span>
+  </div>
+
+  <section class="work" id="work">
+
+    <article class="work-item" data-reveal>
+      <div class="work-visual entropia"><div class="wv-label">entropía</div></div>
+      <div class="work-body">
+        <div class="idx">002 / ENTROPÍA ESTUDIO</div>
+        <h3 class="i18n" data-es="Música, arte y proceso" data-en="Music, art and process">Música, arte y proceso</h3>
+        <p class="i18n" data-es="Sitio editorial para un estudio de producción musical y arte en Mendoza. Tipografía serif, textura de grano y una grilla minimalista que deja respirar al contenido." data-en="Editorial site for a music production and art studio in Mendoza. Serif typography, film-grain texture and a minimal grid that lets the content breathe.">
+          Sitio editorial para un estudio de producción musical y arte en Mendoza. Tipografía serif, textura de grano y una grilla minimalista que deja respirar al contenido.
+        </p>
+        <div class="work-tags"><span>WordPress</span><span>Elementor</span><span>Editorial</span></div>
+        <a class="work-link" href="https://entropiaestudioarg.com/" target="_blank" rel="noopener">
+          <span class="i18n" data-es="Ver sitio" data-en="View site">Ver sitio</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <article class="work-item" data-reveal>
+      <div class="work-visual crew"><div class="wv-label">CREW CO</div></div>
+      <div class="work-body">
+        <div class="idx">001 / CREW CO</div>
+        <h3 class="i18n" data-es="Profesionales del under" data-en="Professionals of the underground">Profesionales del under</h3>
+        <p class="i18n" data-es="Sitio para una productora de experiencias donde música, deporte y cultura se cruzan: downhill skate en Cacheuta, festivales solidarios e infraestructura deportiva a medida." data-en="Site for a production company where music, sport and culture collide: downhill skate in Cacheuta, charity festivals and custom sport infrastructure.">
+          Sitio para una productora de experiencias donde música, deporte y cultura se cruzan: downhill skate en Cacheuta, festivales solidarios e infraestructura deportiva a medida.
+        </p>
+        <div class="work-tags"><span>WordPress</span><span>Elementor</span><span>Brand</span></div>
+        <a class="work-link" href="https://crewco.site/" target="_blank" rel="noopener">
+          <span class="i18n" data-es="Ver sitio" data-en="View site">Ver sitio</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <article class="work-item" data-reveal>
+      <div class="work-visual aldi"><div class="wv-label">ARTE</div></div>
+      <div class="work-body">
+        <div class="idx">003 / ALDISALIGARI.COM</div>
+        <h3 class="i18n" data-es="Proyecto musical propio" data-en="Own music project">Proyecto musical propio</h3>
+        <p class="i18n" data-es="Sitio personal de música y producción audiovisual — un playground de motion, degradés y tipografía construido para mostrar el lado artístico detrás del código." data-en="Personal music and audiovisual production site — a playground of motion, gradients and typography built to show the artistic side behind the code.">
+          Sitio personal de música y producción audiovisual — un playground de motion, degradés y tipografía construido para mostrar el lado artístico detrás del código.
+        </p>
+        <div class="work-tags"><span>Motion</span><span>Audiovisual</span><span>Música</span></div>
+        <a class="work-link" href="https://aldisaligari.com/" target="_blank" rel="noopener">
+          <span class="i18n" data-es="Ver sitio" data-en="View site">Ver sitio</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </div>
+    </article>
+
+  </section>
+
+  <div class="section-head">
+    <span><span class="n">02</span> — <span class="i18n" data-es="Sobre mí" data-en="About">Sobre mí</span></span>
+    <span id="about"></span>
+  </div>
+
+  <section class="about" data-reveal>
+    <div class="about-grid">
+      <h2 class="i18n" data-es="Código con criterio." data-en="Code with taste.">Código con criterio.</h2>
+      <div>
+        <p class="i18n" data-es="Soy desarrolladora front-end y productora creativa en Mendoza, Argentina. Trabajo en la intersección entre &lt;b&gt;desarrollo web&lt;/b&gt;, &lt;b&gt;producción audiovisual&lt;/b&gt; y &lt;b&gt;música&lt;/b&gt; — construyendo sitios para estudios, marcas y proyectos culturales que necesitan verse tan cuidados como suenan." data-en="I'm a front-end developer and creative producer based in Mendoza, Argentina. I work at the intersection of &lt;b&gt;web development&lt;/b&gt;, &lt;b&gt;audiovisual production&lt;/b&gt; and &lt;b&gt;music&lt;/b&gt; — building sites for studios, brands and cultural projects that need to look as considered as they sound.">
+          Soy desarrolladora front-end y productora creativa en Mendoza, Argentina. Trabajo en la intersección entre <b>desarrollo web</b>, <b>producción audiovisual</b> y <b>música</b> — construyendo sitios para estudios, marcas y proyectos culturales que necesitan verse tan cuidados como suenan.
+        </p>
+        <p class="i18n" data-es="Actualmente enfocada en subir el nivel de motion e interacción en cada proyecto: scroll storytelling, micro-interacciones y una tipografía que hace peso. Este mismo portfolio es parte de ese proceso." data-en="Currently focused on raising the motion and interaction bar on every project: scroll storytelling, micro-interactions and typography that carries weight. This portfolio itself is part of that process.">
+          Actualmente enfocada en subir el nivel de motion e interacción en cada proyecto: scroll storytelling, micro-interacciones y una tipografía que hace peso. Este mismo portfolio es parte de ese proceso.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee">
+      <span>WordPress</span><span>Elementor</span><span>GSAP</span><span>Motion</span><span>CSS</span><span>JavaScript</span><span>Ableton</span><span>Motion Design</span>
+      <span>WordPress</span><span>Elementor</span><span>GSAP</span><span>Motion</span><span>CSS</span><span>JavaScript</span><span>Ableton</span><span>Motion Design</span>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <span><span class="n">03</span> — <span class="i18n" data-es="Hablemos" data-en="Let's talk">Hablemos</span></span>
+    <span id="contact"></span>
+  </div>
+
+  <section class="contact" data-reveal>
+    <div class="kicker i18n" data-es="¿Tenés un proyecto en mente?" data-en="Got a project in mind?">¿Tenés un proyecto en mente?</div>
+    <a class="big magnetic" href="mailto:aldisaligari@gmail.com">aldisaligari@gmail.com</a>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/aldana-saligari/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/aldisaligari" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://entropiaestudioarg.com/" target="_blank" rel="noopener">Entropía Estudio</a>
+      <a href="https://crewco.site/" target="_blank" rel="noopener">CREW CO</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© <span id="year"></span> Aldana Saligari</span>
+    <span class="i18n" data-es="Hecho con Roboto Mono, Unbounded y GSAP" data-en="Made with Roboto Mono, Unbounded and GSAP">Hecho con Roboto Mono, Unbounded y GSAP</span>
+  </footer>
+
+</main>
 
 <script>
-(function(){
-  "use strict";
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ============================================================
-     PARALLAX DE FONDO (orbes) — sigue al cursor, suavizado
-  ============================================================ */
-  var hero = document.getElementById('hero');
-  var bg = document.getElementById('bg');
-
-  var parX = 0, parY = 0, targetParX = 0, targetParY = 0;
-
-  function parallaxLoop(){
-    if(!reducedMotion){
-      parX += (targetParX - parX) * 0.06;
-      parY += (targetParY - parY) * 0.06;
-      bg.style.transform = 'translate(' + parX + 'px, ' + parY + 'px)';
-    }
-    requestAnimationFrame(parallaxLoop);
-  }
-  requestAnimationFrame(parallaxLoop);
-
-  /* ============================================================
-     CURSOR CUSTOM + PARTÍCULAS "VOLCÁN"
-  ============================================================ */
-
-  var fx = document.getElementById('fx');
-  var ctx = fx.getContext('2d');
-
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  function resizeFx(){
-    fx.width = fx.clientWidth * dpr;
-    fx.height = fx.clientHeight * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  window.addEventListener('resize', resizeFx);
-  resizeFx();
-
-  var pointer = { x: fx.clientWidth/2, y: fx.clientHeight/2, active:false };
-  var lastPointer = { x: pointer.x, y: pointer.y };
-  var particles = [];
-  var MAX_PARTICLES = 240;
-
-  function spawnParticles(x, y, count, speedBoost){
-    for(var i=0;i<count;i++){
-      if(particles.length >= MAX_PARTICLES) particles.shift();
-      var angle = -Math.PI/2 + (Math.random()-0.5)*1.5;
-      var spd = (1 + Math.random()*2.6) * (1 + speedBoost*0.18);
-      var tinted = Math.random() < 0.18;
-      particles.push({
-        x:x, y:y,
-        vx: Math.cos(angle)*spd + (Math.random()-0.5)*0.6,
-        vy: Math.sin(angle)*spd,
-        life: 1,
-        decay: 0.018 + Math.random()*0.02,
-        size: 1.2 + Math.random()*2.2,
-        color: tinted ? (Math.random()<0.5 ? '82,171,255' : '240,130,255') : '255,255,255'
+  // --- i18n ---
+  (function(){
+    const toggle = document.getElementById('langToggle');
+    const html = document.documentElement;
+    function setLang(lang){
+      html.setAttribute('data-lang', lang);
+      html.lang = lang;
+      document.querySelectorAll('.i18n').forEach(function(el){
+        const val = el.getAttribute('data-' + lang);
+        if(val) el.innerHTML = val;
+      });
+      toggle.querySelectorAll('span').forEach(function(s){
+        s.classList.toggle('active', s.getAttribute('data-set') === lang);
       });
     }
-  }
+    toggle.addEventListener('click', function(e){
+      const btn = e.target.closest('[data-set]');
+      if(!btn) return;
+      setLang(btn.getAttribute('data-set'));
+    });
+  })();
 
-  function updateParticles(){
-    ctx.clearRect(0, 0, fx.clientWidth, fx.clientHeight);
+  // --- scroll reveal: vanilla IntersectionObserver, no external deps ---
+  // (content is visible by default in CSS; we only add the hidden state
+  // right before observing, so nothing can end up permanently invisible)
+  (function(){
+    const els = document.querySelectorAll('[data-reveal]');
+    if(!('IntersectionObserver' in window)){ return; }
+    els.forEach(function(el){ el.classList.add('pre-reveal'); });
+    const io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.remove('pre-reveal');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    els.forEach(function(el){ io.observe(el); });
+  })();
 
-    ctx.save();
-    ctx.shadowColor = 'rgba(255,255,255,0.9)';
-    ctx.shadowBlur = 16;
-    ctx.beginPath();
-    ctx.arc(pointer.x, pointer.y, 7, 0, Math.PI*2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    for(var i=particles.length-1; i>=0; i--){
-      var p = particles[i];
-      p.vy += 0.045;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= p.decay;
-      if(p.life <= 0){ particles.splice(i,1); continue; }
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, Math.max(p.size*p.life, 0.2), 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(' + p.color + ',' + (p.life*0.9) + ')';
-      ctx.fill();
+  // --- GSAP: progressive enhancement only (hero stagger + magnetic hover).
+  // Loaded async; if it fails or is slow, the page above already works fully. ---
+  (function(){
+    function loadScript(src){
+      return new Promise(function(resolve, reject){
+        const s = document.createElement('script');
+        s.src = src; s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
     }
-    ctx.restore();
-
-    requestAnimationFrame(updateParticles);
-  }
-  requestAnimationFrame(updateParticles);
-
-  var idleSpawnAcc = 0;
-  function frameTick(){
-    idleSpawnAcc++;
-    if(!reducedMotion && pointer.active && idleSpawnAcc % 2 === 0){
-      spawnParticles(pointer.x, pointer.y, 1, 0);
-    }
-    requestAnimationFrame(frameTick);
-  }
-  requestAnimationFrame(frameTick);
-
-  function onMove(clientX, clientY){
-    var rect = hero.getBoundingClientRect();
-    var x = clientX - rect.left;
-    var y = clientY - rect.top;
-
-    var dx = x - lastPointer.x;
-    var dy = y - lastPointer.y;
-    var dist = Math.sqrt(dx*dx + dy*dy);
-
-    pointer.x = x; pointer.y = y; pointer.active = true;
-
-    targetParX = ((x/rect.width) - 0.5) * -40;
-    targetParY = ((y/rect.height) - 0.5) * -40;
-
-    if(!reducedMotion){
-      spawnParticles(x, y, Math.min(6, 2 + dist*0.15), dist);
-    }
-
-    lastPointer.x = x; lastPointer.y = y;
-  }
-
-  hero.addEventListener('mousemove', function(e){ onMove(e.clientX, e.clientY); });
-  hero.addEventListener('mouseleave', function(){
-    pointer.active = false;
-    targetParX = 0; targetParY = 0;
-  });
-  hero.addEventListener('touchmove', function(e){
-    if(e.touches && e.touches[0]){
-      onMove(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive:true });
-
-})();
+    loadScript('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js')
+      .then(function(){
+        gsap.from("h1.title .line span", {
+          yPercent: 110, duration: 1.1, ease: "power4.out", stagger: 0.08, delay: 0.15
+        });
+        gsap.from(".hero .kicker, .hero .sub, .scroll-cue", {
+          opacity: 0, y: 16, duration: 1, delay: 0.5, stagger: 0.08, ease: "power2.out"
+        });
+        document.querySelectorAll('.magnetic').forEach(function(el){
+          el.addEventListener('mousemove', function(e){
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width/2;
+            const y = e.clientY - rect.top - rect.height/2;
+            gsap.to(el, { x: x*0.15, y: y*0.3, duration: 0.4, ease: "power2.out" });
+          });
+          el.addEventListener('mouseleave', function(){
+            gsap.to(el, { x:0, y:0, duration:0.6, ease:"elastic.out(1,0.4)" });
+          });
+        });
+      })
+      .catch(function(){ /* CDN unavailable: page still fully usable without it */ });
+  })();
 </script>
 
 </body>

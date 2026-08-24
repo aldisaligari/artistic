@@ -135,6 +135,16 @@
   .work-visual.aldi{ --img:url("aldi.webp"); }
   .work-visual .wv-base, .work-visual .wv-color{
     position:absolute; inset:0; background-image:var(--img); background-size:cover; background-position:center;
+    transform-origin:56% 42%; animation:wv-kenburns 18s ease-in-out infinite alternate;
+  }
+  .work-visual.crew .wv-base, .work-visual.crew .wv-color{ animation-delay:-6s; }
+  .work-visual.aldi .wv-base, .work-visual.aldi .wv-color{ animation-delay:-12s; }
+  @keyframes wv-kenburns{
+    0%{ transform:scale(1) translate(0,0); }
+    100%{ transform:scale(1.07) translate(-1.4%,-1%); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .work-visual .wv-base, .work-visual .wv-color{ animation:none; }
   }
   .work-visual .wv-base{ filter:grayscale(92%) brightness(.5) contrast(1.08); transition:filter .5s ease; }
   .work-visual .wv-color{

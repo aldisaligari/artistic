@@ -149,7 +149,7 @@
   .tunnel{ position:absolute; inset:0; z-index:0; perspective:1000px; perspective-origin:50% 50%; pointer-events:none; }
   .tunnel-scene{ position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
   .tcard{
-    position:absolute; width:clamp(150px, 24vw, 340px); aspect-ratio:1440/736;
+    position:absolute; width:clamp(150px, 24vw, 340px); aspect-ratio:1519/776;
     left:0; top:0; margin:calc(clamp(150px, 24vw, 340px) * -.2556) 0 0 calc(clamp(150px, 24vw, 340px) * -.5);
     border-radius:6px; overflow:hidden; background:#111;
     box-shadow:0 30px 60px -20px rgba(0,0,0,.45);
@@ -257,9 +257,9 @@
   .frame-bar .dots i{ width:9px; height:9px; border-radius:50%; background:#3a3a3a; display:block; }
   .frame-bar .url{ flex:1; text-align:center; opacity:.75; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .frame-bar .live-dot{ width:7px; height:7px; border-radius:50%; background:#3ad46b; box-shadow:0 0 10px #3ad46b; }
-  .viewport{ position:relative; aspect-ratio:1440/736; overflow:hidden; background:#0d0d0d; }
+  .viewport{ position:relative; aspect-ratio:1519/776; overflow:hidden; background:#0d0d0d; }
   .strip{ position:absolute; left:0; top:0; width:100%; will-change:transform; }
-  .strip img{ width:100%; aspect-ratio:1440/736; object-fit:cover; object-position:top; }
+  .strip img{ width:100%; height:auto; aspect-ratio:1519/776; object-fit:cover; object-position:top; }
   .frame .hint{
     position:absolute; right:12px; bottom:12px; z-index:2; display:flex; align-items:center; gap:6px;
     font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#fff;
@@ -268,7 +268,7 @@
   }
   .frame:hover .hint, .frame:focus-visible .hint{ opacity:1; transform:none; }
   .float{
-    position:absolute; z-index:2; width:30%; aspect-ratio:1440/736; border-radius:8px; overflow:hidden;
+    position:absolute; z-index:2; width:30%; aspect-ratio:1519/776; border-radius:8px; overflow:hidden;
     box-shadow:0 30px 60px -20px rgba(0,0,0,.55); will-change:transform; pointer-events:none;
     border:1px solid rgba(127,127,127,.2);
   }
@@ -281,10 +281,11 @@
   .p-count b{ color:var(--fg); font-weight:500; }
 
   @media (max-width:900px){
+    .chapter{ padding:12vh var(--pad) 2vh; }
     .p-grid{ grid-template-columns:1fr; gap:22px; }
     .p-visual{ order:-1; }
-    .p-stage{ padding:84px var(--pad) 52px; justify-content:flex-start; }
-    .motion .p-stage{ justify-content:center; }
+    .p-stage{ padding:76px var(--pad) 52px; justify-content:flex-start; }
+    .motion .p-stage{ justify-content:flex-start; padding-top:76px; }
     .p-meta p.desc{ display:none; }
     .p-meta h3{ font-size:clamp(22px, 6.4vw, 30px); margin-bottom:8px; }
     .p-meta .role{ margin-bottom:12px; }
@@ -303,6 +304,31 @@
   }
   html:not(.motion) .p-meta p.desc{ display:block; }
   html:not(.motion) .tags{ display:flex; }
+
+
+  /* ---------- MOBILE STORY LAYOUT: header / window / subtitle, air distributed on purpose ---------- */
+  @media (max-width:900px){
+    .motion .p-stage{ padding:72px var(--pad) 40px; display:flex; flex-direction:column; justify-content:flex-start; }
+    .motion .p-grid{ flex:1; display:flex; flex-direction:column; align-items:stretch; gap:0; min-height:0; }
+    .motion .p-meta{ display:contents; }
+    .motion .p-meta .idx{ order:1; margin-bottom:10px; }
+    .motion .p-meta h3{ order:2; font-size:clamp(26px, 8vw, 38px); margin-bottom:6px; }
+    .motion .p-meta .role{ order:3; margin-bottom:0; }
+    .motion .p-visual{ order:4; margin:auto 0; padding:28px 0; }
+    .motion .captions{ order:5; border-top:1px solid var(--line); margin:0; min-height:4.6em; }
+    .motion .captions li{ display:none; border:0; padding:14px 0 0; }
+    .motion .captions li.on{ display:flex; padding-left:0; font-family:var(--serif); font-style:italic; font-size:clamp(20px, 6vw, 26px); line-height:1.15; color:var(--fg); }
+    .motion .captions li.on b{ font-family:var(--mono); font-style:normal; font-size:11px; padding-top:.45em; }
+    .motion .p-actions{ order:6; margin-top:16px; }
+    .motion .p-count{ display:none; }
+    .motion .p-progress{ bottom:24px; }
+    .motion .float.f1{ left:-3%; bottom:2%; width:30%; }
+    .motion .float.f2{ right:-3%; top:2%; width:26%; }
+    .motion .px-phone{ bottom:-2%; }
+    .motion .cut.hat{ bottom:-4%; }
+    .motion .cut.glasses{ top:0; }
+    .chapter + .project, .chapter + .saas-case{ margin-top:-4vh; }
+  }
 
   /* ---------- SAAS ---------- */
   .saas-wrap{ position:relative; }
@@ -406,6 +432,25 @@
   .plan-cta:hover .arrow{ transform:translate(3px,-3px); }
   @media (max-width:980px){ .plan-grid{ grid-template-columns:1fr; } }
 
+
+  /* ---------- ACTIVATE (motion statement, no interaction) ---------- */
+  .activate{ position:relative; pointer-events:none; user-select:none; }
+  .act-stage{ position:relative; min-height:100svh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:110px var(--pad) 90px; text-align:center; }
+  .motion .activate{ height:320vh; }
+  .motion .act-stage{ position:sticky; top:0; height:100svh; }
+  .act-title{ position:relative; z-index:2; font-family:var(--display); font-weight:900; text-transform:uppercase; line-height:.9; letter-spacing:-.03em; perspective:900px; }
+  .act-line{ display:block; font-size:clamp(28px, 8.4vw, 180px); white-space:nowrap; }
+  .act-line.serif{ font-family:var(--serif); font-style:italic; font-weight:400; text-transform:none; letter-spacing:-.02em; color:var(--accent); font-size:clamp(52px, 17vw, 260px); line-height:.82; }
+  .act-line .ch{ display:inline-block; transform-origin:50% 100%; will-change:transform, opacity; }
+  .act-ring{ position:absolute; z-index:1; width:min(92vmin, 860px); height:auto; left:50%; top:50%; margin:calc(min(92vmin, 860px) / -2) 0 0 calc(min(92vmin, 860px) / -2); opacity:.55; will-change:transform; }
+  .act-ring text{ font-family:var(--mono); font-size:13px; letter-spacing:.32em; text-transform:uppercase; fill:var(--muted); }
+  .act-band{ position:absolute; z-index:0; left:-10vw; right:-10vw; top:50%; transform:translateY(-50%) rotate(-6deg); white-space:nowrap; overflow:hidden; }
+  .act-band-track{ display:inline-block; font-family:var(--display); font-weight:900; font-size:clamp(60px, 14vw, 220px); color:transparent; -webkit-text-stroke:1px var(--line); will-change:transform; }
+  .act-down{ position:relative; z-index:2; margin-top:clamp(28px, 6vh, 64px); display:flex; flex-direction:column; align-items:center; gap:10px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .act-down svg{ width:22px; height:22px; color:var(--accent); animation:actbob 1.8s ease-in-out infinite; }
+  @keyframes actbob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(8px); } }
+  @media (prefers-reduced-motion: reduce){ .act-down svg{ animation:none; } }
+
   /* ---------- CONTACT ---------- */
   .contact{ padding:20vh var(--pad) 12vh; text-align:center; }
   .contact .kicker{ justify-content:center; margin-bottom:26px; }
@@ -459,7 +504,6 @@
     <a href="#work" data-scroll><span class="i18n" data-es="Trabajo" data-en="Work">Trabajo</span></a>
     <a href="#saas" data-scroll><span class="i18n" data-es="SaaS" data-en="SaaS">SaaS</span></a>
     <a href="#about" data-scroll><span class="i18n" data-es="Sobre mí" data-en="About">Sobre mí</span></a>
-    <a href="#planes" data-scroll><span class="i18n" data-es="Planes" data-en="Plans">Planes</span></a>
     <a href="#contact" data-scroll><span class="i18n" data-es="Contacto" data-en="Contact">Contacto</span></a>
   </nav>
   <div class="lang-toggle" id="langToggle" role="group" aria-label="Idioma">
@@ -554,10 +598,10 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">entropiaestudioarg.com</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/entropia/1.webp" alt="Home de Entropía Estudio" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/entropia/2.webp" alt="Servicios de Entropía Estudio" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/entropia/3.webp" alt="Data Sensible, podcast de Entropía" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/entropia/4.webp" alt="Sesiones 1:1 de Entropía" loading="lazy" decoding="async" width="1440" height="736">
+                <img src="assets/work/entropia/1.webp" alt="Home de Entropía Estudio" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/2.webp" alt="Servicios de Entropía Estudio" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/3.webp" alt="Data Sensible, podcast de Entropía" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/4.webp" alt="Sesiones 1:1 de Entropía" loading="lazy" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -598,11 +642,11 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">crewco.site</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/crew/1.webp" alt="Hero de CREW CO" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/crew/2.webp" alt="Manifiesto de CREW CO" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/crew/3.webp" alt="Carrusel de experiencias de CREW CO" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/crew/4.webp" alt="Experiencia Sunset Solidario" loading="lazy" decoding="async" width="1440" height="736">
-                <img src="assets/work/crew/5.webp" alt="Entropía Estudio x CREW" loading="lazy" decoding="async" width="1440" height="736">
+                <img src="assets/work/crew/1.webp" alt="Hero de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/2.webp" alt="Manifiesto de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/3.webp" alt="Carrusel de experiencias de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/4.webp" alt="Experiencia Sunset Solidario" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/5.webp" alt="Entropía Estudio x CREW" loading="lazy" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -643,11 +687,11 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">aldisaligari.com</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/aldi/1.webp" alt="Hero ALDI" loading="lazy" decoding="async" width="1440" height="735">
-                <img src="assets/work/aldi/2.webp" alt="BDF 848, polaroids en 3D" loading="lazy" decoding="async" width="1440" height="735">
-                <img src="assets/work/aldi/3.webp" alt="REC, documento en vivo" loading="lazy" decoding="async" width="1440" height="735">
-                <img src="assets/work/aldi/4.webp" alt="Sonido sin clasificar" loading="lazy" decoding="async" width="1440" height="735">
-                <img src="assets/work/aldi/5.webp" alt="Bio de Aldana Saligari" loading="lazy" decoding="async" width="1440" height="735">
+                <img src="assets/work/aldi/1.webp" alt="Hero ALDI" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/2.webp" alt="BDF 848, polaroids en 3D" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/3.webp" alt="REC, documento en vivo" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/4.webp" alt="Sonido sin clasificar" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/5.webp" alt="Bio de Aldana Saligari" loading="lazy" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -702,8 +746,8 @@
               <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">pxsol · landing temporada</span><span class="live-dot" title="Versión en vivo"></span></div>
               <div class="viewport">
                 <div class="strip" data-panels="2">
-                  <img src="assets/work/pxsol/1.webp" alt="Hero de la landing Temporada de PXSOL" loading="lazy" decoding="async" width="1440" height="728">
-                  <img src="assets/work/pxsol/2.webp" alt="Formulario y clientes de la landing de PXSOL" loading="lazy" decoding="async" width="1440" height="728">
+                  <img src="assets/work/pxsol/1.webp" alt="Hero de la landing Temporada de PXSOL" loading="lazy" decoding="async" width="1519" height="776">
+                  <img src="assets/work/pxsol/2.webp" alt="Formulario y clientes de la landing de PXSOL" loading="lazy" decoding="async" width="1519" height="776">
                 </div>
               </div>
               <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -722,26 +766,6 @@
       </div>
     </section>
 
-    <div class="next-up">
-      <article class="soon" data-reveal>
-        <span class="blob" style="background:#D20A11;"></span>
-        <div>
-          <span class="badge i18n" data-es="Próximamente · en lanzamiento" data-en="Coming soon · launching">Próximamente · en lanzamiento</span>
-          <h4 style="margin-top:22px;">PXSOL Vacation Rental</h4>
-          <p class="i18n" data-es="Identidad de marca completa: paleta, sistema de assets, placas y video para el nuevo producto de alquileres temporarios. Se publica cuando salga." data-en="Full brand identity: palette, asset system, social pieces and video for the new vacation-rental product. Published once it launches.">Identidad de marca completa: paleta, sistema de assets, placas y video para el nuevo producto de alquileres temporarios. Se publica cuando salga.</p>
-        </div>
-        <div class="lock" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      </article>
-      <article class="soon" data-reveal>
-        <span class="blob" style="background:#1c3fff;"></span>
-        <div>
-          <span class="badge i18n" data-es="Archivo SaaS" data-en="SaaS archive">Archivo SaaS</span>
-          <h4 style="margin-top:22px;" class="i18n" data-es="Más casos de producto" data-en="More product work">Más casos de producto</h4>
-          <p class="i18n" data-es="Landings, sistemas de componentes y piezas de campaña. Este capítulo crece con cada lanzamiento." data-en="Landings, component systems and campaign pieces. This chapter grows with every launch.">Landings, sistemas de componentes y piezas de campaña. Este capítulo crece con cada lanzamiento.</p>
-        </div>
-        <a class="btn magnetic" href="#contact" data-scroll style="align-self:flex-start; position:relative;"><span class="i18n" data-es="Pedir casos por privado" data-en="Ask for private case studies">Pedir casos por privado</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
-      </article>
-    </div>
   </div>
 
   <!-- ============ ABOUT ============ -->
@@ -775,70 +799,34 @@
     </div>
   </div>
 
-  <!-- ============ PLANS ============ -->
-  <div class="section-head">
-    <span><span class="n">04</span> — <span class="i18n" data-es="Planes" data-en="Plans">Planes</span></span>
-    <span class="i18n" data-es="Packs a medida" data-en="Tailored packs">Packs a medida</span>
-  </div>
-  <section class="plans" id="planes" data-theme="paper">
-    <div class="plans-intro" data-reveal>
-      <p class="i18n" data-es="Elegí el pack que mejor se ajuste a tu proyecto. Diseño, motion y código a medida en cada uno." data-en="Choose the pack that best fits your project. Custom design, motion and code in every one.">Elegí el pack que mejor se ajuste a tu proyecto. Diseño, motion y código a medida en cada uno.</p>
-    </div>
-    <div class="plan-grid">
-      <article class="plan-card" data-reveal>
-        <div class="plan-idx">01</div>
-        <h3 class="i18n" data-es="Landing de una sección" data-en="One-section landing">Landing de una sección</h3>
-        <p class="i18n" data-es="Una página enfocada, pensada para presentar un producto, evento o lanzamiento con máximo impacto visual." data-en="A focused, single page built to present a product, event or launch with maximum visual impact.">Una página enfocada, pensada para presentar un producto, evento o lanzamiento con máximo impacto visual.</p>
-        <ul class="plan-features">
-          <li class="i18n" data-es="Diseño y desarrollo a medida" data-en="Custom design and development">Diseño y desarrollo a medida</li>
-          <li class="i18n" data-es="Responsive (mobile / desktop)" data-en="Responsive (mobile / desktop)">Responsive (mobile / desktop)</li>
-          <li class="i18n" data-es="Animaciones y micro-interacciones" data-en="Animations and micro-interactions">Animaciones y micro-interacciones</li>
-          <li class="i18n" data-es="Optimización SEO básica" data-en="Basic SEO optimization">Optimización SEO básica</li>
-        </ul>
-        <a class="plan-cta" href="https://wa.me/5492615011523?text=Hola%20Aldana%21%20quiero%20consultar%20por%20el%20pack%20Landing%20de%20una%20secci%C3%B3n%20para%20hacer%20mi%20Web" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.45a9.9 9.9 0 0 0 4.84 1.24h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.06h-.01a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.09.86.83-3.01-.2-.31a8.15 8.15 0 0 1-1.26-4.35c0-4.5 3.66-8.16 8.18-8.16 2.18 0 4.23.85 5.78 2.4a8.1 8.1 0 0 1 2.39 5.77c0 4.51-3.67 8.12-8.17 8.12Zm4.48-6.12c-.24-.12-1.44-.71-1.67-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.53.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.35-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42-.14 0-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28Z"/></svg>
-          <span class="i18n" data-es="Hagamos tu web" data-en="Let's build your website">Hagamos tu web</span>
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-        </a>
-      </article>
-      <article class="plan-card" data-reveal>
-        <div class="plan-idx">02</div>
-        <h3 class="i18n" data-es="Página web de hasta 4 secciones" data-en="Website with up to 4 sections">Página web de hasta 4 secciones</h3>
-        <p class="i18n" data-es="Un sitio completo — inicio, servicios, proyectos y contacto — con navegación fluida y personalidad propia." data-en="A complete site — home, services, work and contact — with fluid navigation and its own personality.">Un sitio completo — inicio, servicios, proyectos y contacto — con navegación fluida y personalidad propia.</p>
-        <ul class="plan-features">
-          <li class="i18n" data-es="Hasta 4 secciones a medida" data-en="Up to 4 custom sections">Hasta 4 secciones a medida</li>
-          <li class="i18n" data-es="Diseño responsive + motion" data-en="Responsive design + motion">Diseño responsive + motion</li>
-          <li class="i18n" data-es="Formulario de contacto" data-en="Contact form">Formulario de contacto</li>
-          <li class="i18n" data-es="SEO on-page" data-en="On-page SEO">SEO on-page</li>
-        </ul>
-        <a class="plan-cta" href="https://wa.me/5492615011523?text=Hola%20Aldana%21%20quiero%20consultar%20por%20el%20pack%20P%C3%A1gina%20web%20de%20hasta%204%20secciones%20para%20hacer%20mi%20Web" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.45a9.9 9.9 0 0 0 4.84 1.24h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.06h-.01a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.09.86.83-3.01-.2-.31a8.15 8.15 0 0 1-1.26-4.35c0-4.5 3.66-8.16 8.18-8.16 2.18 0 4.23.85 5.78 2.4a8.1 8.1 0 0 1 2.39 5.77c0 4.51-3.67 8.12-8.17 8.12Zm4.48-6.12c-.24-.12-1.44-.71-1.67-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.53.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.35-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42-.14 0-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28Z"/></svg>
-          <span class="i18n" data-es="Hagamos tu web" data-en="Let's build your website">Hagamos tu web</span>
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-        </a>
-      </article>
-      <article class="plan-card" data-reveal>
-        <div class="plan-idx">03</div>
-        <h3 class="i18n" data-es="Página web de más de 4 secciones" data-en="Website with more than 4 sections">Página web de más de 4 secciones</h3>
-        <p class="i18n" data-es="Proyectos más ambiciosos: funciones avanzadas, formularios inteligentes, login y áreas privadas." data-en="More ambitious projects: advanced features, smart forms, login and private areas.">Proyectos más ambiciosos: funciones avanzadas, formularios inteligentes, login y áreas privadas.</p>
-        <ul class="plan-features">
-          <li class="i18n" data-es="Arquitectura de más de 4 secciones" data-en="Architecture with 4+ sections">Arquitectura de más de 4 secciones</li>
-          <li class="i18n" data-es="Funciones avanzadas (formularios, login)" data-en="Advanced features (forms, login)">Funciones avanzadas (formularios, login)</li>
-          <li class="i18n" data-es="Integraciones a medida" data-en="Custom integrations">Integraciones a medida</li>
-          <li class="i18n" data-es="Diseño responsive + motion" data-en="Responsive design + motion">Diseño responsive + motion</li>
-        </ul>
-        <a class="plan-cta" href="https://wa.me/5492615011523?text=Hola%20Aldana%21%20quiero%20consultar%20por%20el%20pack%20P%C3%A1gina%20web%20de%20m%C3%A1s%20de%204%20secciones%20para%20hacer%20mi%20Web" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.45a9.9 9.9 0 0 0 4.84 1.24h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.06h-.01a8.14 8.14 0 0 1-4.15-1.14l-.3-.18-3.09.86.83-3.01-.2-.31a8.15 8.15 0 0 1-1.26-4.35c0-4.5 3.66-8.16 8.18-8.16 2.18 0 4.23.85 5.78 2.4a8.1 8.1 0 0 1 2.39 5.77c0 4.51-3.67 8.12-8.17 8.12Zm4.48-6.12c-.24-.12-1.44-.71-1.67-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.53.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.35-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42-.14 0-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28Z"/></svg>
-          <span class="i18n" data-es="Hagamos tu web" data-en="Let's build your website">Hagamos tu web</span>
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-        </a>
-      </article>
+  <!-- ============ ACTIVATE (pure motion, nothing to click) ============ -->
+  <section class="activate" data-theme="ink" aria-label="Activemos el arte de tu marca">
+    <div class="act-stage">
+      <svg class="act-ring" viewBox="0 0 400 400" aria-hidden="true">
+        <defs><path id="ringPath" d="M200,200 m-170,0 a170,170 0 1,1 340,0 a170,170 0 1,1 -340,0"/></defs>
+        <text><textPath href="#ringPath">diseño · motion · código · sonido · identidad · diseño · motion · código · sonido · identidad · </textPath></text>
+      </svg>
+      <div class="act-band" aria-hidden="true"><div class="act-band-track">BRANDING ✦ WEB ✦ MOTION ✦ CONTENIDO ✦ DIRECCIÓN DE ARTE ✦ BRANDING ✦ WEB ✦ MOTION ✦ CONTENIDO ✦ DIRECCIÓN DE ARTE ✦</div></div>
+      <h2 class="act-title lang-es">
+        <span class="act-line">ACTIVEMOS</span>
+        <span class="act-line serif">el arte</span>
+        <span class="act-line">DE TU MARCA</span>
+      </h2>
+      <h2 class="act-title lang-en">
+        <span class="act-line">LET'S ACTIVATE</span>
+        <span class="act-line serif">the art</span>
+        <span class="act-line">OF YOUR BRAND</span>
+      </h2>
+      <div class="act-down" aria-hidden="true">
+        <span class="i18n" data-es="Escribime" data-en="Write to me">Escribime</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
+      </div>
     </div>
   </section>
 
   <!-- ============ CONTACT ============ -->
   <div class="section-head" id="contact">
-    <span><span class="n">05</span> — <span class="i18n" data-es="Hablemos" data-en="Let's talk">Hablemos</span></span>
+    <span><span class="n">04</span> — <span class="i18n" data-es="Hablemos" data-en="Let's talk">Hablemos</span></span>
     <span class="i18n" data-es="Respuesta en 24 h" data-en="Reply within 24h">Respuesta en 24 h</span>
   </div>
   <section class="contact" data-theme="paper">
@@ -952,7 +940,8 @@
       entropia: { bg:'#f2f0ea', fg:'#151515', muted:'#77736a', line:'rgba(21,21,21,0.14)',   accent:'#9a7432' },
       crew:     { bg:'#070707', fg:'#f2f2f2', muted:'#8c8c8c', line:'rgba(242,242,242,0.14)', accent:'#E6B325' },
       aldi:     { bg:'#0e0d0c', fg:'#ece7da', muted:'#8d877a', line:'rgba(236,231,218,0.14)', accent:'#c9bea2' },
-      saas:     { bg:'#fbfbfd', fg:'#000017', muted:'#555566', line:'rgba(0,0,23,0.12)',     accent:'#D20A11' }
+      saas:     { bg:'#fbfbfd', fg:'#000017', muted:'#555566', line:'rgba(0,0,23,0.12)',     accent:'#D20A11' },
+      ink:      { bg:'#0a0a0a', fg:'#f7f6f3', muted:'#8a8a84', line:'rgba(247,246,243,0.16)', accent:'#4d6bff' }
     };
     var meta = $('meta[name="theme-color"]'), currentTheme = 'paper';
     function setTheme(name){
@@ -972,7 +961,7 @@
     /* ---- split helpers ---- */
     function splitChars(el){
       var text = el.textContent; el.textContent = '';
-      Array.prototype.forEach.call(text, function(c){ var s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s); });
+      Array.prototype.forEach.call(text, function(c){ var s = document.createElement('span'); s.className = 'ch'; s.textContent = c === ' ' ? '\u00a0' : c; el.appendChild(s); });
     }
     $$('h1.title .word').forEach(splitChars);
     function splitWords(el){
@@ -1156,7 +1145,8 @@
       if (phone){
         cuts.forEach(function(c){
           var d = parseFloat(c.dataset.depth || 1);
-          tl.fromTo(c, { yPercent: 160 * d, rotation: -12 * d }, { yPercent: -120 * d, rotation: 10 * d, duration: t + 0.9, ease: 'none' }, 0);
+          var k = isMobile() ? 0.35 : 1;
+          tl.fromTo(c, { yPercent: 160 * d * k, rotation: -12 * d }, { yPercent: -120 * d * k, rotation: 10 * d, duration: t + 0.9, ease: 'none' }, 0);
         });
         var tilt = cuts.map(function(c){ return gsap.quickTo(c, 'skewY', { duration: 0.6, ease: 'power3.out' }); });
         ScrollTrigger.create({ trigger: proj, start: 'top bottom', end: 'bottom top', onUpdate: function(self){
@@ -1165,6 +1155,41 @@
         }});
       }
     });
+
+    /* ---- ACTIVATE: the statement builds itself letter by letter, nothing to click ---- */
+    $$('.act-line').forEach(splitChars);
+    // poster fit: every uppercase line fills the width exactly (any language, any screen)
+    function fitActivate(){
+      var avail = $('.act-stage').clientWidth - 2 * parseFloat(getComputedStyle($('.act-stage')).paddingLeft);
+      $$('.act-title').forEach(function(t){
+        if (t.offsetParent === null) return;
+        $$('.act-line:not(.serif)', t).forEach(function(l){
+          l.style.fontSize = '100px';
+          var w = l.scrollWidth || 1;
+          l.style.fontSize = Math.min(230, 100 * avail / w) + 'px';
+        });
+      });
+      ScrollTrigger.refresh();
+    }
+    fitActivate();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitActivate);
+    window.addEventListener('resize', fitActivate);
+    langListeners.push(fitActivate);
+    $$('.act-title').forEach(function(title){
+      var lines = $$('.act-line', title);
+      var tl = gsap.timeline({ defaults: { ease: 'none' },
+        scrollTrigger: { trigger: '.activate', start: 'top 70%', end: 'bottom bottom', scrub: true } });
+      lines.forEach(function(line, i){
+        tl.from($$('.ch', line), { yPercent: 120, rotationX: -95, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.045 }, i * 0.9);
+      });
+      tl.fromTo(lines[1], { scale: 0.7 }, { scale: 1, duration: 1.6, ease: 'power2.out' }, 0.9)
+        .from('.act-down', { opacity: 0, y: 20, duration: 0.6 }, 2.6)
+        .to(title, { scale: 1.04, duration: 1.2 }, 2.8);
+    });
+    gsap.fromTo('.act-ring', { rotation: -40, scale: 0.85 }, { rotation: 220, scale: 1.08, ease: 'none',
+      scrollTrigger: { trigger: '.activate', start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.fromTo('.act-band-track', { xPercent: 0 }, { xPercent: -45, ease: 'none',
+      scrollTrigger: { trigger: '.activate', start: 'top bottom', end: 'bottom top', scrub: true } });
 
     /* ---- marquee reacts to scroll velocity & direction ---- */
     var mq = $('#marquee');

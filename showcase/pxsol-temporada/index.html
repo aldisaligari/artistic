@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PXSOL Landing Temporada — Portfolio Aldana Saligari</title>
+<meta name="description" content="Creá tu cuenta en Pxsol y adelantate a la temporada: más reservas directas para tu hotel.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/pxsol-logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Work+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/mano-iphone.webp" type="image/webp">
+<link rel="stylesheet" href="vendor/lenis.css">
+<script>
+  /* Los estados iniciales del motion sólo se aplican si el JS corre y el usuario no pidió movimiento reducido. */
+  (function(){
+    var d=document.documentElement;
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){ d.classList.add('anim'); }
+    setTimeout(function(){ if(!window.__pxsReady){ d.classList.remove('anim'); } }, 3500);
+  })();
+</script>
+<style>
+/* =========================================================
+   Tokens — pxsol-design-system/sistema/tokens.md
+   ========================================================= */
+:root{
+  --ink:#000017; --ink-900:#1A1A1A; --body:#2B2B33; --ink-350:#555555; --ink-400:#999999;
+  --paper:#FFFFFF; --paper-3:#F6F7FB; --stroke:#E4E4E7;
+  --red:#D20A11; --red-600:#B3090F;
+  --sky:#DCE8F5;   /* halo cielo/mar del ad T6 */
+  --sand:#F3E7D6;  /* halo arena del ad T6 */
+  --ease:cubic-bezier(0.22,0.61,0.36,1);
+  --dur-hover:140ms; --dur-ui:200ms; --dur-reveal:500ms;
+  --shadow-card:0 1px 2px rgba(0,0,23,.05),0 10px 30px rgba(0,0,23,.07),0 22px 50px rgba(0,0,23,.08);
+  --shadow-aviso:0 10px 24px rgba(0,0,23,.20),0 2px 5px rgba(0,0,23,.08);
+  --f-brand:'Work Sans',system-ui,sans-serif;
+  --f-ui:'Inter',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);font-family:var(--f-brand);font-size:16px;line-height:1.4;overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{display:block;max-width:none}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+em{font-style:italic}
+
+/* =========================================================
+   Layout general
+   ========================================================= */
+.page{position:relative}
+.wrap{position:relative;width:100%;max-width:1440px;margin:0 auto}
+
+/* HERO --------------------------------------------------- */
+.hero{position:relative;z-index:1}
+.hero__bg{position:absolute;inset:0 auto auto 0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wash{position:absolute;border-radius:50%}
+.wash--sky{background:radial-gradient(closest-side,var(--sky) 0%,var(--sky) 38%,rgba(220,232,245,0) 100%)}
+.wash--sand{background:radial-gradient(closest-side,var(--sand) 0%,var(--sand) 40%,rgba(243,231,214,0) 100%)}
+
+.hero__inner{position:relative;min-height:1030px}
+.col{position:relative;z-index:3;width:640px;margin-left:auto;margin-right:56px;padding-top:28px;padding-bottom:34px}
+.brand{display:block;width:101px;height:48px}
+.brand img{width:100%;height:100%}
+.login{display:none}
+
+.pill-urg{display:inline-flex;margin-top:20px;padding:9px 22px;border-radius:100px;background:#fff;box-shadow:0 6px 20px rgba(0,0,23,.12);font-size:16px;letter-spacing:.1em;color:var(--body);text-transform:uppercase;white-space:nowrap}
+.h1{margin:18px 0 0;font-weight:300;font-size:60px;line-height:1.02;letter-spacing:-.02em;color:var(--ink)}
+.h1 .line{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+.h1 .line>span{display:block}
+.h1 em{font-weight:300}
+.lead{margin:18px 0 0;font-size:20px;line-height:1.4;color:var(--body)}
+
+/* Formulario --------------------------------------------- */
+.form{margin-top:18px;background:#fff;border-radius:20px;box-shadow:var(--shadow-card);padding:24px 28px 28px;display:grid;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:12px}
+.field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.field--full{grid-column:1 / -1}
+.field>label,.field>legend{font-size:14px;color:var(--body);padding:0}
+fieldset.field{border:0;margin:0;padding:0;min-width:0}
+fieldset.field>legend{margin-bottom:8px;float:left;width:100%}
+fieldset.field>legend+*{clear:both}
+.input{height:48px;width:100%;border:0;border-radius:8px;background:var(--paper-3);padding:0 16px;font-size:16px;color:var(--ink);outline:none;transition:background-color var(--dur-ui) var(--ease),box-shadow var(--dur-ui) var(--ease)}
+.input::placeholder{color:var(--ink-400);opacity:1}
+.input:hover{background:#EFF1F7}
+.input:focus-visible{background:#fff;box-shadow:0 0 0 2px var(--red)}
+.phone{display:flex;gap:10px}
+.country{position:relative;flex:0 0 auto;height:48px;border-radius:8px;background:var(--paper-3);display:flex;align-items:center;gap:8px;padding:0 12px;transition:background-color var(--dur-ui) var(--ease),box-shadow var(--dur-ui) var(--ease)}
+.country:hover{background:#EFF1F7}
+.country:focus-within{background:#fff;box-shadow:0 0 0 2px var(--red)}
+.country img{width:22px;height:16px;border-radius:2px;object-fit:cover}
+.country .pref{font-size:16px;color:var(--ink);min-width:28px}
+.country svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.country select{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;font-size:16px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{position:relative;height:48px;border-radius:8px;background:var(--paper-3);display:flex;align-items:center;gap:10px;padding:0 14px;cursor:pointer;font-size:16px;color:var(--body);transition:background-color var(--dur-ui) var(--ease),box-shadow var(--dur-ui) var(--ease),color var(--dur-ui) var(--ease)}
+.choice:hover{background:#EFF1F7}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.radio{position:relative;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px #C9C9D1;transition:box-shadow var(--dur-ui) var(--ease)}
+.radio::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--ink);transform:scale(0);transition:transform var(--dur-ui) var(--ease)}
+.choice:has(input:checked){background:#fff;box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink)}
+.choice:has(input:checked) .radio{box-shadow:inset 0 0 0 2px var(--ink)}
+.choice:has(input:checked) .radio::after{transform:scale(1)}
+.choice:has(input:focus-visible){box-shadow:0 0 0 2px var(--red)}
+
+/* CTA — estados del playbook §6 */
+.cta{grid-column:1 / -1;position:relative;isolation:isolate;margin-top:0;height:56px;border:0;border-radius:100px;background:var(--red);color:#fff;font-family:var(--f-brand);font-weight:600;font-size:18px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;overflow:visible;transform:translateY(0) scale(1);transition:transform 260ms var(--ease)}
+.cta__label{position:relative;z-index:2}
+.cta__sh{position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;transition:opacity 260ms var(--ease)}
+.cta__sh--rest{box-shadow:0 10px 26px rgba(0,0,23,.18);opacity:1}
+.cta__sh--hover{box-shadow:0 18px 48px rgba(0,0,23,.26);opacity:0}
+.cta__sh--press{box-shadow:0 4px 10px rgba(0,0,23,.22);opacity:0}
+.cta__clip{position:absolute;inset:0;border-radius:inherit;overflow:hidden;z-index:1;pointer-events:none}
+.cta__shine{position:absolute;top:-30%;left:0;width:90px;height:160%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.28) 50%,rgba(255,255,255,0) 100%);transform:translateX(-140px) rotate(18deg)}
+.cta.is-shining .cta__shine{animation:ctaShine 900ms var(--ease) 1}
+@keyframes ctaShine{from{transform:translateX(-140px) rotate(18deg)}to{transform:translateX(760px) rotate(18deg)}}
+@media (hover:hover){
+  .cta:hover{transform:translateY(-6px) scale(1.022)}
+  .cta:hover .cta__sh--rest{opacity:0}
+  .cta:hover .cta__sh--hover{opacity:1}
+}
+.cta:active{transform:translateY(-1px) scale(.982);transition-duration:120ms}
+.cta:active .cta__sh--hover,.cta:active .cta__sh--rest{opacity:0}
+.cta:active .cta__sh--press{opacity:1}
+.cta:focus-visible{outline:2px solid var(--red);outline-offset:4px}
+.legal{grid-column:1 / -1;margin:0;font-size:13px;line-height:1.4;color:var(--ink-350)}
+.legal a{color:var(--ink);transition:color var(--dur-hover) var(--ease)}
+.legal a:hover{color:var(--red)}
+
+/* Refuerzo ----------------------------------------------- */
+.refuerzo{margin-top:40px}
+.refuerzo__t{margin:0;font-weight:300;font-size:28px;letter-spacing:-.01em;color:var(--ink);line-height:1.18}
+.refuerzo__t em{font-weight:300}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 0;padding:0;list-style:none}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:11px 20px 11px 16px;border-radius:100px;background:#fff;box-shadow:0 4px 14px rgba(0,0,23,.08);font-size:16px;color:var(--ink-900);white-space:nowrap}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);flex:0 0 8px}
+
+/* Escena (visual) ---------------------------------------- */
+.stage{position:absolute;left:0;top:0;width:744px;height:1030px;transform-origin:0 0;z-index:2;pointer-events:none}
+.stage--mob{display:none}
+.obj{position:absolute;transform-origin:0 0}
+.obj>.in{width:100%;height:100%;will-change:transform,opacity}
+.obj img{width:100%;height:100%;object-fit:contain}
+.hand-mask{-webkit-mask-image:linear-gradient(180deg,transparent 0%,transparent 5%,#000 21%,#000 100%);mask-image:linear-gradient(180deg,transparent 0%,transparent 5%,#000 21%,#000 100%)}
+
+/* Aviso de reserva (de MOTOR · V1 8523:281, vía ad Q3) */
+.aviso{position:relative;display:inline-flex;align-items:center;gap:14px;padding:16px 36px 16px 16px;background:#fff;border-radius:20px;box-shadow:var(--shadow-aviso);overflow:hidden;white-space:nowrap;will-change:transform,opacity}
+.aviso__ico{flex:0 0 57px;width:57px;height:57px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px var(--stroke);display:grid;place-items:center}
+.aviso__ico svg{width:34px;height:32px}
+.aviso__txt{display:flex;flex-direction:column;gap:3px;font-family:var(--f-ui)}
+.aviso__app{font-weight:600;font-size:14px;letter-spacing:.04em;color:#55555C;line-height:1.2}
+.aviso__ttl{font-weight:600;font-size:22px;color:#0A0A0A;line-height:1.2}
+.aviso__det{font-size:16.3px;color:var(--body);line-height:1.25}
+.aviso__shine{position:absolute;top:-60%;left:0;width:110px;height:220%;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,23,.07) 50%,rgba(0,0,0,0) 100%);transform:translateX(-160px) rotate(18deg);pointer-events:none}
+
+/* CLIENTES ----------------------------------------------- */
+.clientes{position:relative;z-index:1;padding:40px 0 72px;text-align:center}
+.clientes__t{margin:0;font-weight:300;font-size:46px;line-height:1.17;color:var(--ink)}
+.clientes__s{margin:14px auto 0;font-size:24px;color:var(--ink-350)}
+.badges{display:flex;justify-content:center;align-items:center;gap:32px;margin-top:28px;height:52px}
+.badges img{height:auto}
+.badges .b-capterra{width:131px}.badges .b-getapp{width:77px}.badges .b-sa{width:127px}
+.marquee{position:relative;margin-top:28px;height:98px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)}
+.marquee__track{position:absolute;left:0;top:0;height:100%;display:flex;align-items:center;will-change:transform}
+.marquee__set{display:flex;align-items:center;gap:90px;padding-right:90px;height:100%}
+.marquee__set img{height:auto;flex:0 0 auto;filter:grayscale(1)} /* en Figma: blend «Luminosity» sobre blanco */
+.starfish{position:absolute;left:20px;top:25px;width:258px;height:158px;z-index:0;pointer-events:none}
+.starfish img{width:100%;height:100%;object-fit:contain}
+.starfish .in{position:relative;width:100%;height:100%}
+/* Recortes: capa de física (.fx) + sombra de contacto que queda en el piso */
+.fx{position:relative;z-index:1;width:100%;height:100%;will-change:transform}
+.gshadow{position:absolute;z-index:0;left:14%;right:14%;bottom:-4%;height:26%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,23,.20),rgba(0,0,23,.07) 60%,rgba(0,0,23,0));opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.gshadow{opacity:1}}
+
+/* FOOTER ------------------------------------------------- */
+.footer{position:relative;z-index:1;background:var(--paper-3)}
+.footer__in{display:flex;align-items:center;gap:24px;padding:24px 96px}
+.footer__logo{width:71px;height:34px}
+.footer__copy{flex:1;font-size:14px;color:var(--ink-350)}
+.footer__links{display:flex;gap:20px;font-size:14px;color:var(--ink)}
+.footer__links a{transition:color var(--dur-hover) var(--ease)}
+.footer__links a:hover{color:var(--red)}
+
+/* Estados iniciales del motion (sólo con .anim) ----------- */
+.anim [data-a]{opacity:0}
+
+/* =========================================================
+   Mobile / tablet (< 1180px) — frame «Mobile 412»
+   ========================================================= */
+@media (max-width:1179.98px){
+  .hero__inner{min-height:0}
+  .stage--desk{display:none}
+  .col{width:auto;max-width:560px;margin:0 auto;padding:20px 16px 0}
+  .head{display:flex;align-items:center;justify-content:space-between}
+  .brand{width:81px;height:38px}
+  .login{display:inline;font-size:14px;color:var(--red)}
+  .pill-urg{margin-top:34px;padding:8px 14px;font-size:12px}
+  .h1{margin-top:16px;font-size:min(40px,9.6vw);line-height:1.06}
+  .lead{margin-top:14px;font-size:min(17px,4.1vw)}
+  .stage--mob{display:block;position:relative;width:412px;height:490px;margin:0;transform-origin:0 0}
+  .stage-mob-box{position:relative;margin:8px -16px 0;overflow:hidden}
+  .form{margin-top:8px;grid-template-columns:1fr;padding:20px;row-gap:14px}
+  .form .row-names{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .cta{font-size:16px}
+  .refuerzo{display:none}
+  .clientes{padding:32px 0 48px;margin-top:24px}
+  .clientes__t{font-size:32px}
+  .clientes__s{max-width:320px;font-size:16px;line-height:1.4;margin-top:10px}
+  .badges{gap:27px;margin-top:22px;height:45px}
+  .badges .b-capterra{width:113px}.badges .b-getapp{width:66px}.badges .b-sa{width:109px}
+  .marquee{margin-top:22px;height:77px}
+  .marquee__set{gap:48px;padding-right:48px}
+  .starfish{display:none}
+  .footer__in{flex-direction:column;align-items:flex-start;gap:14px;padding:28px 16px}
+  .footer__copy{flex:none}
+}
+@media (min-width:1180px){
+  .form .row-names{display:contents}
+  .head{display:block}
+}
+@media (max-width:1179.98px) and (min-width:600px){
+  .col{padding-left:24px;padding-right:24px}
+  .stage-mob-box{margin:0 -24px}
+}
+
+/* Movimiento reducido: todo en su estado final */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .marquee__track{position:static;justify-content:center;flex-wrap:wrap}
+  .marquee{height:auto;-webkit-mask-image:none;mask-image:none}
+  .marquee__set[aria-hidden="true"]{display:none}
+  .marquee__set{flex-wrap:wrap;justify-content:center;row-gap:24px;padding:0 24px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="hero">
+    <div class="wrap hero__inner">
+      <div class="hero__bg" aria-hidden="true">
+        <!-- desktop: frame 1440 · Wash cielo/mar (-420,-360 1180x860) · Wash arena (-360,560 1300x760) -->
+        <div class="wash wash--sky" data-a="wash" id="washSky"></div>
+        <div class="wash wash--sand" data-a="wash" id="washSand"></div>
+      </div>
+
+      <!-- Escena desktop (coordenadas del frame «Desktop 1440») -->
+      <div class="stage stage--desk" id="stageDesk" aria-hidden="true">
+        <div class="obj" style="left:-70px;top:-40px;width:960px;height:720px" data-a="hand"><div class="in">
+          <picture><source srcset="assets/img/mano-iphone.webp" type="image/webp"><img src="assets/img/mano-iphone.webp" alt="" width="960" height="720" fetchpriority="high"></picture>
+        </div></div>
+        <div class="obj" style="left:8px;top:761px;width:250px;height:98px;transform:rotate(-14deg)" data-a="prop" data-par="-18" data-depth="1"><div class="in">
+          <div class="fx"><picture><source srcset="assets/img/anteojos-sol.webp" type="image/webp"><img src="assets/img/anteojos-sol.webp" alt="" loading="lazy"></picture></div><span class="gshadow"></span>
+        </div></div>
+        <div class="obj" style="left:473px;top:812px;width:244px;height:147px;transform:rotate(8deg)" data-a="prop" data-par="-12" data-depth="0.7"><div class="in">
+          <div class="fx"><picture><source srcset="assets/img/sombrero-paja.webp" type="image/webp"><img src="assets/img/sombrero-paja.webp" alt="" loading="lazy"></picture></div><span class="gshadow"></span>
+        </div></div>
+        <div class="obj" style="left:150px;top:628px;transform:rotate(5deg)"><div class="aviso" data-aviso="1" data-rot="5"><span class="aviso__ico">__PX__</span><span class="aviso__txt"><span class="aviso__app">PXSOL · ahora</span><span class="aviso__ttl">Nueva reserva directa</span><span class="aviso__det">Doble Superior Viñedo · ARS 171.400</span></span><span class="aviso__shine"></span></div></div>
+        <div class="obj" style="left:154px;top:803px;transform:rotate(-2deg)"><div class="aviso" data-aviso="2" data-rot="-2"><span class="aviso__ico">__PX__</span><span class="aviso__txt"><span class="aviso__app">PXSOL · ahora</span><span class="aviso__ttl">Nueva reserva directa</span><span class="aviso__det">Suite Vista Valle · ARS 248.900</span></span><span class="aviso__shine"></span></div></div>
+        <div class="obj" style="left:162px;top:935px;transform:rotate(3deg)"><div class="aviso" data-aviso="3" data-rot="3"><span class="aviso__ico">__PX__</span><span class="aviso__txt"><span class="aviso__app">PXSOL · ahora</span><span class="aviso__ttl">Nueva reserva directa</span><span class="aviso__det">Doble Estándar · ARS 132.600</span></span><span class="aviso__shine"></span></div></div>
+      </div>
+
+      <div class="col" id="col">
+        <div class="head" data-a="logo">
+          <a class="brand" href="#" aria-label="Pxsol"><img src="assets/img/pxsol-logo.svg" alt="Pxsol" width="101" height="48"></a>
+          <a class="login" href="#">Iniciar sesión</a>
+        </div>
+        <div class="pill-urg" data-a="pill">Adelantate a la temporada</div>
+        <h1 class="h1"><span class="line"><span data-a="l1">Impulsá tus reservas</span></span><span class="line"><span data-a="l2"><em>esta temporada.</em></span></span></h1>
+        <p class="lead" data-a="lead">Lo que se prende en temporada llega tarde. Creá tu cuenta hoy.</p>
+
+        <!-- Escena mobile (frame «Mobile 412» · VISUAL 412x490) -->
+        <div class="stage-mob-box" aria-hidden="true">
+          <div class="stage stage--mob" id="stageMob">
+            <div class="obj" style="left:8px;top:397px;width:158px;height:62px;transform:rotate(-14deg)" data-a="prop" data-depth="1"><div class="in">
+              <div class="fx"><picture><source srcset="assets/img/anteojos-sol.webp" type="image/webp"><img src="assets/img/anteojos-sol.webp" alt="" loading="lazy"></picture></div><span class="gshadow"></span>
+            </div></div>
+            <div class="obj hand-mask" style="left:-40px;top:-20px;width:520px;height:390px" data-a="hand"><div class="in">
+              <picture><source srcset="assets/img/mano-iphone.webp" type="image/webp"><img src="assets/img/mano-iphone.webp" alt="" width="520" height="390"></picture>
+            </div></div>
+            <div class="obj" style="left:268px;top:298px;width:170px;height:102px;transform:rotate(10deg)" data-a="prop" data-depth="0.7"><div class="in">
+              <div class="fx"><picture><source srcset="assets/img/sombrero-paja.webp" type="image/webp"><img src="assets/img/sombrero-paja.webp" alt="" loading="lazy"></picture></div><span class="gshadow"></span>
+            </div></div>
+            <div class="obj" style="left:22px;top:301px;transform:rotate(5deg) scale(.68)"><div class="aviso" data-aviso="m1" data-rot="5"><span class="aviso__ico">__PX__</span><span class="aviso__txt"><span class="aviso__app">PXSOL · ahora</span><span class="aviso__ttl">Nueva reserva directa</span><span class="aviso__det">Doble Superior Viñedo · ARS 171.400</span></span><span class="aviso__shine"></span></div></div>
+            <div class="obj" style="left:96px;top:414px;transform:rotate(-2deg) scale(.68)"><div class="aviso" data-aviso="m2" data-rot="-2"><span class="aviso__ico">__PX__</span><span class="aviso__txt"><span class="aviso__app">PXSOL · ahora</span><span class="aviso__ttl">Nueva reserva directa</span><span class="aviso__det">Suite Vista Valle · ARS 248.900</span></span><span class="aviso__shine"></span></div></div>
+          </div>
+        </div>
+
+        <form class="form" id="form" data-a="form" novalidate aria-label="Creá tu cuenta">
+          <div class="row-names">
+            <div class="field" data-a="field"><label for="f-nombre">Nombre</label><input class="input" id="f-nombre" name="nombre" autocomplete="given-name" placeholder="Tu nombre" required></div>
+            <div class="field" data-a="field"><label for="f-apellido">Apellido</label><input class="input" id="f-apellido" name="apellido" autocomplete="family-name" placeholder="Tu apellido" required></div>
+          </div>
+          <div class="field" data-a="field"><label for="f-email">Tu email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" placeholder="nombre@tuhotel.com" required></div>
+          <div class="field" data-a="field">
+            <label for="f-tel">Número de teléfono</label>
+            <div class="phone">
+              <div class="country">
+                <img id="flag" src="assets/flags/ar.svg" alt="" width="22" height="16">
+                <span class="pref" id="pref">+54</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                <select id="f-pais" name="pais" aria-label="País">
+                  <option value="ar" data-p="+54" selected>Argentina (+54)</option>
+                  <option value="uy" data-p="+598">Uruguay (+598)</option>
+                  <option value="cl" data-p="+56">Chile (+56)</option>
+                  <option value="py" data-p="+595">Paraguay (+595)</option>
+                  <option value="bo" data-p="+591">Bolivia (+591)</option>
+                  <option value="pe" data-p="+51">Perú (+51)</option>
+                  <option value="co" data-p="+57">Colombia (+57)</option>
+                  <option value="mx" data-p="+52">México (+52)</option>
+                  <option value="es" data-p="+34">España (+34)</option>
+                </select>
+              </div>
+              <input class="input" id="f-tel" name="telefono" type="tel" autocomplete="tel-national" placeholder="11 2345 6789" required>
+            </div>
+          </div>
+          <fieldset class="field" data-a="field">
+            <legend>¿Trabajás en un hotel o alojamiento?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="hotel" value="si" checked><span class="radio"></span>Sí</label>
+              <label class="choice"><input type="radio" name="hotel" value="no"><span class="radio"></span>No</label>
+            </div>
+          </fieldset>
+          <fieldset class="field" data-a="field">
+            <legend>¿Vendés por Booking o Despegar?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="otas" value="si" checked><span class="radio"></span>Sí</label>
+              <label class="choice"><input type="radio" name="otas" value="no"><span class="radio"></span>No</label>
+            </div>
+          </fieldset>
+          <div class="field field--full" data-a="field"><label for="f-aloj">Nombre del alojamiento</label><input class="input" id="f-aloj" name="alojamiento" autocomplete="organization" placeholder="Buscá tu alojamiento"></div>
+          <button class="cta" type="submit" data-a="field" id="cta">
+            <span class="cta__sh cta__sh--rest"></span><span class="cta__sh cta__sh--hover"></span><span class="cta__sh cta__sh--press"></span>
+            <span class="cta__clip"><span class="cta__shine"></span></span>
+            <span class="cta__label">Quiero mi cuenta</span>
+          </button>
+          <p class="legal" data-a="field">Al crear tu cuenta aceptás los <a href="#">Términos y condiciones</a> y la <a href="#">Política de privacidad</a> de Pxsol.</p>
+        </form>
+
+        <div class="refuerzo" id="refuerzo">
+          <h2 class="refuerzo__t" data-a="ref">Sumale a tu hotel <em>lo que trae reservas.</em></h2>
+          <ul class="chips">
+            <li class="chip" data-a="chip">Publicidad para tu marca</li>
+            <li class="chip" data-a="chip">Motor con promociones</li>
+            <li class="chip" data-a="chip">Web y Publicidad</li>
+            <li class="chip" data-a="chip">Agente de IA 24/7</li>
+            <li class="chip" data-a="chip">Tarifas con IA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CLIENTES ================= -->
+  <section class="clientes" id="clientes">
+    <div class="wrap">
+      <div class="starfish" aria-hidden="true" data-a="star" data-depth="0.45"><div class="in"><div class="fx">
+        <picture><source srcset="assets/img/estrella-caracoles.webp" type="image/webp"><img src="assets/img/estrella-caracoles.webp" alt="" loading="lazy"></picture>
+      </div><span class="gshadow"></span></div></div>
+      <h2 class="clientes__t" data-a="ct">Nuestros clientes</h2>
+      <p class="clientes__s" data-a="cs">+1800 alojamientos de LATAM ya operan con Pxsol.</p>
+      <div class="badges" data-a="cb">
+        <img class="b-capterra" src="assets/calificaciones/capterra.png" alt="Capterra 4,9 estrellas" loading="lazy">
+        <img class="b-getapp" src="assets/calificaciones/getapp.png" alt="GetApp 4,9 estrellas" loading="lazy">
+        <img class="b-sa" src="assets/calificaciones/software-advice.png" alt="Software Advice 4,9 estrellas" loading="lazy">
+      </div>
+    </div>
+    <div class="marquee" id="marquee" data-a="cm">
+      <div class="marquee__track" id="track">
+        <div class="marquee__set" id="logoSet">
+          <img src="assets/logos-clientes/diplomatic.png" alt="Diplomatic Hotel" style="width:166px" loading="lazy">
+          <img src="assets/logos-clientes/amerian.png" alt="Amérian Hotel Casino Gala" style="width:132px" loading="lazy">
+          <img src="assets/logos-clientes/estancia-la-mantilla.png" alt="Estancia La Mantilla" style="width:89px" loading="lazy">
+          <img src="assets/logos-clientes/riviera-caribe-maya.png" alt="Hotel Riviera Caribe Maya" style="width:158px" loading="lazy">
+          <img src="assets/logos-clientes/radisson-blu.png" alt="Radisson Blu" style="width:125px" loading="lazy">
+          <img src="assets/logos-clientes/andesmar.png" alt="Andesmar Hotel" style="width:143px" loading="lazy">
+          <img src="assets/logos-clientes/city-center-rosario.png" alt="City Center Rosario" style="width:83px" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="wrap footer__in">
+      <img class="footer__logo" src="assets/img/pxsol-logo.svg" alt="Pxsol" width="71" height="34">
+      <span class="footer__copy">© 2026 PXSOL · Software hotelero para LATAM</span>
+      <nav class="footer__links" aria-label="Legales"><a href="#">Términos</a><a href="#">Política de privacidad</a></nav>
+    </div>
+  </footer>
+</div>
+
+<!-- Ícono del aviso: paths del isotipo PX del ad Q3 (P grafito + X rojo), sin redibujar -->
+<template id="pxIcon"><svg viewBox="0 0 34 32" aria-hidden="true"><path d="M11.7868 10.4049C11.6612 11.8404 11.042 12.894 9.92884 13.5669C8.81573 14.2399 7.29287 14.4924 5.36168 14.3235L3.77136 14.1843L3.32157 19.3254L0.821379 19.1067L2.02369 5.36426L6.42754 5.74955C8.33907 5.91678 9.73866 6.39366 10.6305 7.17793C11.5209 7.96338 11.9064 9.03817 11.7868 10.4049ZM3.93669 12.2946L5.2648 12.4108C6.54833 12.5231 7.50716 12.4055 8.14152 12.0556C8.77707 11.7071 9.13084 11.1063 9.20533 10.2549C9.27437 9.46575 9.05715 8.85297 8.555 8.41668C8.05273 7.98169 7.23199 7.71371 6.0953 7.61426L4.35814 7.46228L3.9355 12.2932L3.93669 12.2946Z" fill="#1A1A1A"/><path d="M12.2567 6.23389L16.313 12.8717L8.15539 22.1265L11.3122 23.3718L18.0508 15.7193L26.354 29.3242L31.1824 31.2284L20.2318 13.2447L29.8003 2.38953L24.6087 3.45898L18.474 10.3993L15.516 5.55254L12.2567 6.23389Z" fill="#D20A11"/></svg></template>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/CustomEase.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  var $=function(s,c){return (c||document).querySelector(s)};
+  var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+
+  /* Ícono PX en cada aviso */
+  var px=$('#pxIcon').innerHTML;
+  $$('.aviso__ico').forEach(function(el){ el.innerHTML=px; });
+
+  /* País → bandera y prefijo */
+  var sel=$('#f-pais');
+  sel.addEventListener('change',function(){
+    var o=sel.options[sel.selectedIndex];
+    $('#flag').src='assets/flags/'+o.value+'.svg';
+    $('#pref').textContent=o.getAttribute('data-p');
+  });
+
+  /* Formulario: validación nativa. El envío real queda pendiente (endpoint a definir). */
+  $('#form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var f=e.target;
+    if(!f.checkValidity()){ f.reportValidity(); return; }
+  });
+
+  /* Barrido de luz del CTA: consecuencia del hover, una vez por entrada */
+  var cta=$('#cta');
+  cta.addEventListener('mouseenter',function(){
+    cta.classList.remove('is-shining'); void cta.offsetWidth; cta.classList.add('is-shining');
+  });
+  cta.addEventListener('animationend',function(){ cta.classList.remove('is-shining'); });
+
+  /* Washes: geometría del Figma (radial = elipse difusa con blur 200) */
+  function placeWashes(){
+    var mob=window.innerWidth<1180;
+    var sky=$('#washSky'), sand=$('#washSand'), pad=mob?140:200;
+    var S= mob? {x:-300,y:-220,w:760,h:560} : {x:-420,y:-360,w:1180,h:860};
+    var A= mob? {x:-200,y:430,w:820,h:560}  : {x:-360,y:560,w:1300,h:760};
+    if(mob){ var k=Math.min(window.innerWidth/412,1.5); [S,A].forEach(function(o){o.x*=k;o.y*=k;o.w*=k;o.h*=k;}); pad*=k; }
+    [[sky,S],[sand,A]].forEach(function(p){ var el=p[0],o=p[1];
+      el.style.left=(o.x-pad)+'px'; el.style.top=(o.y-pad)+'px'; el.style.width=(o.w+pad*2)+'px'; el.style.height=(o.h+pad*2)+'px'; });
+  }
+
+  /* Escala de las escenas */
+  function fitStages(){
+    var vw=window.innerWidth;
+    if(vw>=1180){
+      var col=$('#col'), left=col.offsetLeft;            // borde izquierdo de la columna derecha
+      var s=Math.min(1,left/744);
+      var st=$('#stageDesk');
+      st.style.transform='translateX('+(left-744*s)+'px) scale('+s+')';
+    } else {
+      var box=$('.stage-mob-box'), w=box.clientWidth, k=Math.min(w/412,1.5);
+      var sm=$('#stageMob');
+      sm.style.transform='translateX('+((w-412*k)/2)+'px) scale('+k+')';
+      sm.style.marginLeft='0';
+      box.style.height=(490*k)+'px';
+    }
+  }
+  placeWashes(); fitStages();
+  window.addEventListener('resize',function(){ placeWashes(); fitStages(); });
+
+  /* ---------- Marquee de clientes: loop continuo con inercia del scroll ---------- */
+  var track=$('#track'), set=$('#logoSet');
+  function buildMarquee(){
+    $$('.marquee__set[aria-hidden]',track).forEach(function(n){n.remove();});
+    var need=Math.ceil((window.innerWidth*2)/Math.max(1,set.offsetWidth))+1;
+    for(var i=0;i<need;i++){ var c=set.cloneNode(true); c.removeAttribute('id'); c.setAttribute('aria-hidden','true'); $$('img',c).forEach(function(im){im.alt='';}); track.appendChild(c); }
+  }
+
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(typeof gsap==='undefined' || typeof Lenis==='undefined' || reduce){
+    document.documentElement.classList.remove('anim');
+    if(!reduce){ window.addEventListener('load',buildMarquee); }
+    return;
+  }
+  window.__pxsReady=true;
+  gsap.registerPlugin(ScrollTrigger,CustomEase);
+  CustomEase.create('pxs','M0,0 C0.22,0.61 0.36,1 1,1');         // easing del DS
+  CustomEase.create('fall','M0,0 C0.55,0 0.85,0.35 1,1');          // caída: acelera hasta tocar
+
+  /* ---------- Lenis: scroll suave ---------- */
+  var lenis=new Lenis({lerp:0.1,smoothWheel:true,wheelMultiplier:1});
+  window.__lenis=lenis;
+  lenis.on('scroll',ScrollTrigger.update);
+  gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  /* Marquee con flow: velocidad base + velocidad del scroll, cambia de sentido si se sube */
+  var mx=0, cur=-1, setW=1;
+  function measure(){ setW=set.offsetWidth; }
+  window.addEventListener('load',function(){ buildMarquee(); measure(); });
+  window.addEventListener('resize',function(){ buildMarquee(); measure(); });
+  var BASE=55; // px/s
+  gsap.ticker.add(function(time,dt){
+    var v=lenis.velocity||0;                                   // px por cuadro
+    var dir=(v<-0.3)?1:-1;                                     // subir invierte el sentido
+    var target=dir*(1+Math.min(Math.abs(v)*0.28,7));           // bajar acelera, con tope
+    cur+=(target-cur)*0.055;                                   // inercia: vuelve sola al ritmo base
+    mx+=cur*BASE*(dt/1000);
+    if(setW>0){ mx=gsap.utils.wrap(-setW,0,mx); }
+    track.style.transform='translate3d('+mx.toFixed(2)+'px,0,0)';
+  });
+
+  /* ---------- Caída de un aviso (timeline reutilizable) ---------- */
+  function fall(el,opts){
+    opts=opts||{};
+    var rot=parseFloat(el.getAttribute('data-rot')||0);
+    var dy=opts.dy||-320, extra=opts.extra||14;
+    var shine=$('.aviso__shine',el);
+    var tl=gsap.timeline({paused:!!opts.paused});
+    tl.set(el,{y:dy,rotation:extra,opacity:0,scale:.96,transformOrigin:'50% 50%'})
+      .to(el,{opacity:1,duration:.18,ease:'none'},0)
+      .to(el,{y:12,duration:.62,ease:'fall'},0)
+      .to(el,{rotation:-1.2,duration:.62,ease:'pxs'},0)
+      .to(el,{scale:1,duration:.5,ease:'pxs'},0.1)
+      .to(el,{y:0,rotation:0,duration:.5,ease:'pxs'},0.62)
+      .fromTo(shine,{x:-160},{x:Math.max(460,el.offsetWidth+120),duration:.9,ease:'pxs'},1.02);
+    return tl;
+  }
+
+  /* Avance de scroll que nunca retrocede (la caída ocurre una sola vez) */
+  function monotonic(tl,st){
+    var max=0;
+    return function(self){
+      if(self.progress>max){ max=self.progress; gsap.to(tl,{progress:max,duration:.9,ease:'power2.out',overwrite:true}); }
+    };
+  }
+
+  /* ---------- Reveals por scroll (una vez, al 20 %) ---------- */
+  function reveal(targets,vars,trigger){
+    gsap.set(targets,{opacity:0,y:vars.y==null?16:vars.y});
+    ScrollTrigger.create({trigger:trigger||targets[0]||targets,start:'top 80%',once:true,onEnter:function(){
+      gsap.to(targets,{opacity:1,y:0,duration:vars.d||.8,ease:'pxs',stagger:vars.s||0,delay:vars.delay||0});
+    }});
+  }
+
+  /* ---------- Recortes: «apoyados en la arena» ----------
+     Entrada: caen desde arriba ya inclinados, tocan (leve rebote de 6 px) y se asientan.
+     Recién al tocar aparece la sombra de contacto (efecto lumínico, no posicional). */
+  function settle(inEl,o){
+    o=o||{};
+    var spin=o.spin||10, shadow=$('.gshadow',inEl);
+    var tl=gsap.timeline();
+    tl.set(inEl,{yPercent:o.lift||-55,rotation:spin,scale:1.06,opacity:0,transformOrigin:'50% 80%'})
+      .to(inEl,{opacity:1,duration:.22,ease:'none'},0)
+      .to(inEl,{yPercent:4,duration:.6,ease:'fall'},0)
+      .to(inEl,{rotation:-spin*.12,scale:1,duration:.6,ease:'pxs'},0)
+      .to(inEl,{yPercent:0,rotation:0,duration:.55,ease:'pxs'},.6)
+      .fromTo(shadow,{opacity:0,scaleX:.7},{opacity:1,scaleX:1,duration:.7,ease:'pxs'},.5);
+    return tl;
+  }
+
+  /* ---------- Física de los recortes: inercia del scroll + cursor ----------
+     Reaccionan a eventos (velocidad del scroll de Lenis y posición del mouse), nunca a un reloj:
+     sin interacción quedan absolutamente quietos. Cada uno tiene su profundidad (data-depth). */
+  var phys=[];
+  function initPhysics(){
+    phys=$$('[data-depth] .fx').filter(function(fx){ return fx.offsetParent!==null; }).map(function(fx){
+      var d=parseFloat(fx.closest('[data-depth]').getAttribute('data-depth'))||.6;
+      return {d:d, x:gsap.quickTo(fx,'x',{duration:1,ease:'power3'}), y:gsap.quickTo(fx,'y',{duration:.55,ease:'power3'}), r:gsap.quickTo(fx,'rotation',{duration:.6,ease:'power3'})};
+    });
+  }
+  var mouse={x:0,y:0}, hasHover=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if(hasHover){ window.addEventListener('pointermove',function(e){ mouse.x=e.clientX/window.innerWidth*2-1; mouse.y=e.clientY/window.innerHeight*2-1; },{passive:true}); }
+  gsap.ticker.add(function(){
+    if(!phys.length) return;
+    var v=gsap.utils.clamp(-30,30,(window.__lenis&&window.__lenis.velocity)||0);
+    phys.forEach(function(p){
+      p.y(gsap.utils.clamp(-24,24,v*1.1*p.d) + mouse.y*6*p.d);   // se quedan atrás al scrollear rápido (tope 24 px)
+      p.r(gsap.utils.clamp(-8,8,-v*0.45*p.d) + mouse.x*2.2*p.d);  // y se inclinan con la velocidad (tope 8°)
+      p.x(mouse.x*10*p.d);                      // profundidad con el cursor
+    });
+  });
+
+  var mm=gsap.matchMedia();
+  var ready=Promise.all([
+    document.fonts?document.fonts.ready:Promise.resolve(),
+    new Promise(function(r){ var im=$('#stageDesk img')||$('#stageMob img'); if(!im||im.complete) return r(); im.addEventListener('load',r,{once:true}); setTimeout(r,1600); })
+  ]);
+
+  ready.then(function(){
+    document.documentElement.classList.remove('anim');
+    fitStages();
+
+    /* Estados iniciales comunes */
+    gsap.set('[data-a="wash"]',{opacity:0});
+    gsap.set(['[data-a="logo"]','[data-a="pill"]','[data-a="lead"]'],{opacity:0,y:8});
+    gsap.set(['[data-a="l1"]','[data-a="l2"]'],{yPercent:110});
+    gsap.set('[data-a="form"]',{opacity:0,y:24});
+    gsap.set('[data-a="field"]',{opacity:0,y:8});
+    gsap.set('[data-a="hand"] .in',{opacity:0,y:36,scale:.975,transformOrigin:'50% 30%'});
+    gsap.set('[data-a="prop"] .in, [data-a="star"] .in',{opacity:0});
+    gsap.set('.aviso',{opacity:0});
+
+    /* Entrada — orden del playbook §4: panel → logo → eyebrow → objeto → L1 → L2 → bajada → CTA */
+    var intro=gsap.timeline({defaults:{ease:'pxs'}});
+    intro.to('[data-a="wash"]',{opacity:1,duration:1.1,ease:'none'},0)
+         .to('[data-a="logo"]',{opacity:1,y:0,duration:.5},.15)
+         .to('[data-a="pill"]',{opacity:1,y:0,duration:.5},.29)
+         .to('[data-a="hand"] .in',{opacity:1,y:0,scale:1,duration:1.15},.36)
+         .to('[data-a="l1"]',{yPercent:0,duration:.9},.5)
+         .to('[data-a="l2"]',{yPercent:0,duration:.9},.64)
+         .to('[data-a="lead"]',{opacity:1,y:0,duration:.6},.86)
+         .to('[data-a="form"]',{opacity:1,y:0,duration:.8},.98)
+         .to('[data-a="field"]',{opacity:1,y:0,duration:.5,stagger:.085},1.08);
+
+    /* ---------- Desktop ---------- */
+    mm.add('(min-width:1180px)',function(){
+      var a1=$('[data-aviso="1"]'), a2=$('[data-aviso="2"]'), a3=$('[data-aviso="3"]');
+      var props=$$('#stageDesk [data-a="prop"] .in');
+      props.forEach(function(p,i){ intro.add(settle(p,{spin:i?-11:12,lift:i?-60:-70}),1.2+i*.2); });
+      initPhysics();
+      intro.add(fall(a1,{dy:-300,extra:12}),1.45);
+
+      /* Refuerzo + avisos 2 y 3: caen con el scroll */
+      gsap.set('[data-a="ref"]',{opacity:0,y:14});
+      gsap.set('[data-a="chip"]',{opacity:0,y:12});
+      /* Guion del scroll: aviso 2 → titular + pills (azulejos 90 ms) → aviso 3. Nunca dos efectos a la vez. */
+      var story=gsap.timeline({paused:true});
+      story.add(fall(a2,{dy:-420,extra:-13}),0)
+           .to('[data-a="ref"]',{opacity:1,y:0,duration:.55,ease:'pxs'},1.15)
+           .to('[data-a="chip"]',{opacity:1,y:0,duration:.5,ease:'pxs',stagger:.09},1.3)
+           .add(fall(a3,{dy:-460,extra:12}),2.0);
+
+      /* Sin pin: la página nunca se frena. Las reservas caen durante el recorrido natural del hero
+         (desde que se empieza a scrollear hasta que el borde inferior del hero llega al 55 % de la pantalla). */
+      var hero=$('#hero');
+      var stDrive=ScrollTrigger.create({trigger:hero,start:'top top',end:'bottom 55%',onUpdate:monotonic(story)});
+
+      /* Recortes: parallax mínimo (≤ 18 px), sin flotación */
+      props.forEach(function(p){
+        var amt=parseFloat(p.parentNode.getAttribute('data-par')||-12);
+        gsap.to(p,{y:amt,ease:'none',scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:true}});
+      });
+
+      return function(){ stDrive.kill(); };
+    });
+
+    /* ---------- Mobile / tablet ---------- */
+    mm.add('(max-width:1179.98px)',function(){
+      var m1=$('[data-aviso="m1"]'), m2=$('[data-aviso="m2"]');
+      var props=$$('#stageMob [data-a="prop"] .in');
+      props.forEach(function(p,i){ intro.add(settle(p,{spin:i?-11:12}),.95+i*.2); });
+      initPhysics();
+      intro.add(fall(m1,{dy:-240,extra:12}),1.2);
+      var t2=fall(m2,{dy:-300,extra:-12,paused:true});
+      var st=ScrollTrigger.create({trigger:'#stageMob',start:'top 34%',end:'bottom 72%',onUpdate:monotonic(t2)});
+      return function(){ st.kill(); };
+    });
+
+    /* ---------- Clientes ---------- */
+    reveal($$('[data-a="ct"],[data-a="cs"]'),{s:.14},'#clientes');
+    reveal($$('[data-a="cb"] img'),{s:.09,y:10,delay:.25},'#clientes');
+    reveal([$('[data-a="cm"]')],{y:0,d:1.1,delay:.35},'#clientes');
+    var star=$('[data-a="star"] .in');
+    if(star && star.offsetParent!==null){
+      gsap.set(star,{opacity:0});
+      ScrollTrigger.create({trigger:'#clientes',start:'top 80%',once:true,onEnter:function(){ settle(star,{spin:-28,lift:-70}).delay(.15); }});
+      initPhysics();
+    }
+
+    ScrollTrigger.refresh();
+  });
+})();
+</script>
+<!-- Portfolio badge: esta copia es una pieza de portfolio, no el sitio de PXSOL -->
+<style>
+.pf-badge{position:fixed;left:16px;bottom:16px;z-index:9999;display:flex;align-items:center;gap:12px;padding:10px 14px 10px 12px;border-radius:999px;background:rgba(10,10,10,.86);color:#fff;font:500 12px/1.2 'Inter',system-ui,sans-serif;letter-spacing:.02em;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100vw - 32px)}
+.pf-badge a{color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;opacity:.95}
+.pf-badge a:hover{opacity:1;text-decoration:underline}
+.pf-badge .pf-dot{width:7px;height:7px;border-radius:50%;background:#1c3fff;flex:0 0 auto}
+.pf-badge .pf-txt{opacity:.75}
+@media (max-width:520px){.pf-badge .pf-txt{display:none}}
+</style>
+<div class="pf-badge" role="note">
+  <span class="pf-dot" aria-hidden="true"></span>
+  <span class="pf-txt">Pieza de portfolio · Diseño y desarrollo: Aldana Saligari para PXSOL</span>
+  <a href="../../#saas">← Volver al portfolio</a>
+</div>
+
+</body>
+</html>

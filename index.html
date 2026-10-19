@@ -185,6 +185,11 @@
     .orbit.o2 text{ font-size:22px; }
   }
 
+
+  /* Safari paints each animated letter on its own layer and clips it to the letter's box:
+     italic serif descenders (g, q) and slanted overhangs got cut. Give every letter room. */
+  .line.serif .ch, .act-line.serif .ch, .loader .l-word .ch{ padding:0 .08em .26em; margin:0 -.08em -.26em; }
+
   /* ---------- MANIFESTO ---------- */
   .manifesto{ padding:22vh var(--pad) 24vh; }
   @media (max-width:700px){ .manifesto{ padding:14vh var(--pad) 12vh; } }
@@ -590,10 +595,10 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">entropiaestudioarg.com</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/entropia/1.webp" alt="Home de Entropía Estudio" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/entropia/2.webp" alt="Servicios de Entropía Estudio" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/entropia/3.webp" alt="Data Sensible, podcast de Entropía" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/entropia/4.webp" alt="Sesiones 1:1 de Entropía" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/1.webp" alt="Home de Entropía Estudio" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/2.webp" alt="Servicios de Entropía Estudio" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/3.webp" alt="Data Sensible, podcast de Entropía" decoding="async" width="1519" height="776">
+                <img src="assets/work/entropia/4.webp" alt="Sesiones 1:1 de Entropía" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -631,11 +636,11 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">crewco.site</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/crew/1.webp" alt="Hero de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/crew/2.webp" alt="Manifiesto de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/crew/3.webp" alt="Carrusel de experiencias de CREW CO" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/crew/4.webp" alt="Experiencia Sunset Solidario" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/crew/5.webp" alt="Entropía Estudio x CREW" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/1.webp" alt="Hero de CREW CO" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/2.webp" alt="Manifiesto de CREW CO" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/3.webp" alt="Carrusel de experiencias de CREW CO" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/4.webp" alt="Experiencia Sunset Solidario" decoding="async" width="1519" height="776">
+                <img src="assets/work/crew/5.webp" alt="Entropía Estudio x CREW" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -673,11 +678,11 @@
             <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">aldisaligari.com</span><span class="live-dot" title="Sitio en vivo"></span></div>
             <div class="viewport">
               <div class="strip">
-                <img src="assets/work/aldi/1.webp" alt="Hero ALDI" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/aldi/2.webp" alt="BDF 848, polaroids en 3D" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/aldi/3.webp" alt="REC, documento en vivo" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/aldi/4.webp" alt="Sonido sin clasificar" loading="lazy" decoding="async" width="1519" height="776">
-                <img src="assets/work/aldi/5.webp" alt="Bio de Aldana Saligari" loading="lazy" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/1.webp" alt="Hero ALDI" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/2.webp" alt="BDF 848, polaroids en 3D" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/3.webp" alt="REC, documento en vivo" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/4.webp" alt="Sonido sin clasificar" decoding="async" width="1519" height="776">
+                <img src="assets/work/aldi/5.webp" alt="Bio de Aldana Saligari" decoding="async" width="1519" height="776">
               </div>
             </div>
             <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
@@ -731,15 +736,15 @@
               <div class="frame-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">pxsol · landing de temporada</span><span class="live-dot" title="Versión en vivo"></span></div>
               <div class="viewport">
                 <div class="strip">
-                  <img src="assets/work/pxsol/1.webp" alt="Hero de la landing de temporada de PXSOL" loading="lazy" decoding="async" width="1519" height="776">
-                  <img src="assets/work/pxsol/2.webp" alt="Formulario y clientes de la landing de PXSOL" loading="lazy" decoding="async" width="1519" height="776">
+                  <img src="assets/work/pxsol/1.webp" alt="Hero de la landing de temporada de PXSOL" decoding="async" width="1519" height="776">
+                  <img src="assets/work/pxsol/2.webp" alt="Formulario y clientes de la landing de PXSOL" decoding="async" width="1519" height="776">
                 </div>
               </div>
               <span class="hint"><span class="i18n" data-es="Explorar en vivo" data-en="Explore live">Explorar en vivo</span> ↗</span>
             </a>
             <div class="px-phone" aria-hidden="true">
-              <img class="m1" src="assets/work/pxsol/m1.webp" alt="" loading="lazy">
-              <img class="m2" src="assets/work/pxsol/m2.webp" alt="" loading="lazy">
+              <img class="m1" src="assets/work/pxsol/m1.webp" alt="">
+              <img class="m2" src="assets/work/pxsol/m2.webp" alt="">
             </div>
             <img class="cut hat" data-depth="1.6" src="assets/work/cutouts/sombrero-paja.webp" alt="" aria-hidden="true" loading="lazy">
             <img class="cut glasses" data-depth="1.1" src="assets/work/cutouts/anteojos-sol.webp" alt="" aria-hidden="true" loading="lazy">
@@ -890,6 +895,7 @@
 
   try {
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true }); // iOS address bar showing/hiding must not re-measure the stories
     var isMobile = function(){ return window.innerWidth < 900; };
 
     /* Lenis: wheel smoothing only. Touch keeps native momentum (syncTouch off) so
@@ -1030,7 +1036,7 @@
       var lastIdx = -1;
 
       // eager-load this project's panels when it gets close, so nothing pops in mid-story
-      ScrollTrigger.create({ trigger: proj, start: 'top 250%', once: true, onEnter: function(){ imgs.forEach(function(i){ i.loading = 'eager'; }); } });
+      ScrollTrigger.create({ trigger: proj, start: 'top 250%', once: true, onEnter: function(){ imgs.forEach(function(i){ if (!i.complete) { var src = i.src; i.removeAttribute('loading'); i.src = ''; i.src = src; } }); } });
 
       function setIdx(i){
         if (i === lastIdx) return; lastIdx = i;
